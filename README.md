@@ -109,3 +109,46 @@ MoEMultiSensorDataset는 PyTorch 학습 루틴에 바로 사용될 수 있는 �
 anomaly insert는 anomaly_cfg 파라미터로 제어 가능합니다.
 
 use_multirate=True이면 센서별로 랜덤하게 50/200/2000Hz를 사용하여 원시 데이터를 만들고, 마지막에 모두 resample로 target_T 길이로 정렬합니다.
+
+
+
+
+**"main_pre_classifier.py"** 구조
+
+```mermaid
+flowchart TB
+    subgraph INPUT
+        S[scene: list of sensors] --> RAW[raw np.array/tensor/list, raw_rate, type, meta]
+    end
+
+    subgraph ENCODERS
+        RAW --> ENC[RateEncoderTemporal<br>outputs: vec + temporal features]
+    end
+
+    subgraph GRAPH
+        ENC --> X[X: N x emb]
+        X --> G1[SimpleGraphLayer g1]
+        G1 --> H1[H1: N x emb]
+        H1 --> G2[SimpleGraphLayer g2]
+        G2 --> H2[H2: N x emb]
+    end
+
+    subgraph HEADS
+        H2 --> NODE[node_head: N x 3]
+        H2 --> BIT[bitmask_head: N x 16]
+        H2 --> PAIR[pair_feat: N x N x 2*emb]
+        PAIR --> EDGE[edge_head: N x N]
+        PAIR --> ORDER[order_head: N x N x 2]
+        ENC --> TEMP[temps: list of L x emb]
+        TEMP --> OVERFLOW[overflow temporal conv per-pair<br>conv1->ReLU->conv2->ReLU->conv_out]
+    end
+
+    subgraph OUTPUT
+        NODE --> OUT[node_logits: N x 3]
+        EDGE --> OUT2[edge_logits: N x N]
+        ORDER --> OUT3[order_logits: N x N x 2]
+        BIT --> OUT4[bitmask_logits: N x 16]
+        OVERFLOW --> OUT5[overflow_logits: N x N x L]
+        G2 --> ATT[attention: N x N]
+    end
+
