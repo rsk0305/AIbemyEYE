@@ -257,95 +257,103 @@ def generate_multimodal_data_advanced(
     num_sensors=100,
     duration_sec=1.0,
     rates=[2000, 200, 50],
-    target_T=200,
     prob_1word=0.4,
     prob_2word=0.3,
     prob_bits=0.3,
     seed=None,
     anomaly_cfg=None,
-    use_multirate=True
 ):
     """
-    Generate dataset where each sensor has:
-      - raw signal at its own sampling rate
-      - aligned signal resampled to target_T (for model input)
-    Returns:
-      sensors: list of dicts with keys:
-         'id','type'(1/2/3), 'raw_rate', 'raw_len','raw_signal' (array),
-         'aligned' (length target_T), 'meta', 'anomalies'
-      aligned_matrix: numpy array (N, target_T) dtype int64
+    Generate sensors sampled at different rates and return:
+      - sensors_by_rate: dict mapping rate -> list of sensor dicts
+      - sensors_flat: flattened list of all sensor dicts (ids are unique)
+    Each sensor dict contains:
+      'id','type'(1/2/3), 'raw_rate', 'raw_len','raw_signal' (array),
+      'meta', 'anomalies'
+    Notes:
+      - No alignment/resampling is performed here; raw signals keep their native rate.
+      - Sensors are distributed evenly across the provided rates (remainder distributed one-by-one).
     """
     if seed is not None:
         set_seed(seed)
-    sensors = []
-    # random assignment of types
-    types = np.random.choice([1,2,3], size=num_sensors, p=[prob_1word, prob_2word, prob_bits])
-    # assign sampling rate per sensor (choose from rates)
-    if use_multirate:
-        raw_rates = np.random.choice(rates, size=num_sensors)
-    else:
-        raw_rates = np.full(num_sensors, rates[0])
 
-    for i in range(num_sensors):
-        t = int(types[i])
-        rate = int(raw_rates[i])
-        raw_len = int(np.ceil(duration_sec * rate))
-        meta = {}
-        anomalies = []
-        if t == 1:
-            # raw = gen_1word_continuous(raw_len, rate)
-            raw = gen_1word_realistic(raw_len, rate)
-            
-            raw, segs = inject_anomalies(raw, rate, anomaly_config=anomaly_cfg)
-            anomalies = segs
-            meta['type'] = '1word'
-            meta['bit_start'] = 0
-            meta['bit_end'] = 15
-        elif t == 2:
-            # lsb, msb, raw32 = gen_2word_32bit_pair(raw_len, rate)
-            lsb, msb, raw32 = gen_2word_realistic(raw_len, rate)
-            # choose whether the pair is stored consecutively (msb next to lsb) or scattered:
-            # We will store only one sensor line per 16-bit row in the final per-sensor list
-            # but mark pair index in meta -> here we generate pair as atomic and later expand in dataset if needed
-            # For simplicity, store LSB as the raw signal for this sensor and keep msb as paired metadata
-            # Alternatively randomize: half sensors will represent LSB half MSB in separate sensor entries
-            raw = lsb
-            raw, segs = inject_anomalies(raw, rate, anomaly_config=anomaly_cfg)
-            anomalies = segs
-            meta['type'] = '2word_lsb'
-            meta['pair_msb_signal'] = msb  # store msb array in meta for reference
-            meta['note'] = 'msb stored in meta; pairing info kept'
-        elif t == 3:
-            # pick width and start bit but ensure sequential bits assumption
-            bit_width = np.random.randint(1, 16)
-            vals, sbit, ebit = gen_mixed_bitword(bit_prob=0.5, bits_prob=0.5, noise_bits=True)
-            # vals, sbit, ebit = gen_bits_field(raw_len, rate, bit_width)
-            raw, segs = inject_anomalies(vals, rate, anomaly_config=anomaly_cfg)
-            anomalies = segs
-            meta['type'] = 'bits'
-            meta['bit_start'] = sbit
-            meta['bit_end'] = ebit
-            raw = raw.astype(np.int64)
+    # distribute sensors across rates (even split, distribute remainder)
+    n_rates = len(rates)
+    base = num_sensors // n_rates
+    remainder = num_sensors % n_rates
+    counts = [base + (1 if i < remainder else 0) for i in range(n_rates)]
 
-        # resample / align to target_T (time-aligned across sensors)
-        aligned = resample(raw.astype(np.float64), target_T)
-        # normalize/clip to 0..65535 and integerize
-        aligned = np.clip(np.round(aligned), 0, 65535).astype(np.int64)
+    sensors_by_rate = {}
+    sensors_flat = []
+    global_id = 0
 
-        sensors.append({
-            'id': i,
-            'type': t,
-            'raw_rate': rate,
-            'raw_len': raw_len,
-            'raw_signal': raw.astype(np.int64),
-            'aligned': aligned,
-            'meta': meta,
-            'anomalies': anomalies
-        })
+    for rate_idx, rate in enumerate(rates):
+        cnt = counts[rate_idx]
+        rate = int(rate)
+        sensors_this_rate = []
 
-    # Construct aligned matrix (N x target_T)
-    aligned_matrix = np.vstack([s['aligned'] for s in sensors])
-    return sensors, aligned_matrix
+        for _ in range(cnt):
+            # choose sensor type by probabilities
+            t = int(np.random.choice([1,2,3], p=[prob_1word, prob_2word, prob_bits]))
+            raw_len = int(np.ceil(duration_sec * rate))
+            meta = {}
+            anomalies = []
+
+            if t == 1:
+                raw = gen_1word_realistic(raw_len, rate)
+                raw, segs = inject_anomalies(raw, rate, anomaly_config=anomaly_cfg)
+                anomalies = segs
+                meta['type'] = '1word'
+                meta['bit_start'] = 0
+                meta['bit_end'] = 15
+                raw = raw.astype(np.int64)
+
+            elif t == 2:
+                # gen_2word_realistic returns (raw32, lsb, msb)
+                raw32, lsb, msb = gen_2word_realistic(raw_len, rate)
+                # keep LSB as sensor raw value, keep MSB in meta
+                raw = lsb.astype(np.int64)
+                raw, segs = inject_anomalies(raw, rate, anomaly_config=anomaly_cfg)
+                anomalies = segs
+                meta['type'] = '2word_lsb'
+                meta['pair_msb_signal'] = msb.astype(np.int64)
+                meta['note'] = 'msb stored in meta; pairing info kept'
+
+            elif t == 3:
+                # create mixed bitword then pack to 16-bit integer per timestep
+                word_bits, wmeta = gen_mixed_bitword(T=raw_len, bit_prob=0.5, bits_prob=0.5, noise_bits=True)
+                # word_bits shape (T,16) -> pack to integer
+                bit_weights = (1 << np.arange(16)).astype(np.int32)
+                vals = (word_bits * bit_weights).sum(axis=1).astype(np.int64)
+                raw, segs = inject_anomalies(vals, rate, anomaly_config=anomaly_cfg)
+                anomalies = segs
+                meta['type'] = 'bits'
+                # extract start/end if available
+                if wmeta.get('bits_range') is not None:
+                    sbit, ebit = wmeta['bits_range']
+                    meta['bit_start'] = sbit
+                    meta['bit_end'] = ebit
+                else:
+                    meta['bit_start'] = 0
+                    meta['bit_end'] = 15
+                raw = raw.astype(np.int64)
+
+            sensor = {
+                'id': global_id,
+                'type': t,
+                'raw_rate': rate,
+                'raw_len': raw_len,
+                'raw_signal': raw,
+                'meta': meta,
+                'anomalies': anomalies
+            }
+            sensors_this_rate.append(sensor)
+            sensors_flat.append(sensor)
+            global_id += 1
+
+        sensors_by_rate[rate] = sensors_this_rate
+
+    return sensors_by_rate, sensors_flat
 
 # -----------------------------
 # PyTorch Dataset for MoE training
@@ -402,19 +410,22 @@ def plot_sensor_signal(sensor, which='aligned', ax=None):
     return ax
 
 def quick_summary(sensors):
-    types = [s['type'] for s in sensors]
+    # accept either list or dict (rate->list)
+    if isinstance(sensors, dict):
+        sensors_list = [s for lst in sensors.values() for s in lst]
+    else:
+        sensors_list = sensors
+
+    types = [s['type'] for s in sensors_list]
     unique, counts = np.unique(types, return_counts=True)
     print("Type distribution (1=1word,2=2word,3=bits):")
     for u,c in zip(unique, counts):
         print(f"  Type {u}: {c}")
-    n_anom = sum([1 if len(s['anomalies'])>0 else 0 for s in sensors])
-    print(f"Sensors with anomalies: {n_anom}/{len(sensors)}")
-    # print sample meta
+    n_anom = sum([1 if len(s['anomalies'])>0 else 0 for s in sensors_list])
+    print(f"Sensors with anomalies: {n_anom}/{len(sensors_list)}")
     print("Sample meta (first 5):")
-    for s in sensors[:5]:
+    for s in sensors_list[:5]:
         print(s['id'], s['meta'])
-
-
 
 def generate_multimodal_data(
     num_sensors=100,
@@ -560,8 +571,8 @@ def generate_multimodal_data(
 if __name__ == "__main__":
     # parameters
     N = 200
-    duration = 1000.0  # seconds
-    target_T = 400  # aligned length
+    duration = 100.0  # seconds
+    rates = [2000, 200, 50]
     seed = 123
 
     anomaly_cfg = {
@@ -570,53 +581,44 @@ if __name__ == "__main__":
         'types': ['spike', 'drift', 'stuck', 'noiseburst']
     }
 
-    sensors, aligned = generate_multimodal_data_advanced(
+    sensors_by_rate, sensors = generate_multimodal_data_advanced(
         num_sensors=N,
         duration_sec=duration,
-        rates=[2000, 200, 50],
-        target_T=target_T,
+        rates=rates,
         prob_1word=0.89,
         prob_2word=0.01,
         prob_bits=0.1,
         seed=seed,
-        anomaly_cfg=anomaly_cfg,
-        use_multirate=True
+        anomaly_cfg=anomaly_cfg
     )
 
-    quick_summary(sensors)
+    quick_summary(sensors_by_rate)
 
-    # Create dataset and dataloader
+    # Create dataset and dataloader from flattened sensors
     ds = MoEMultiSensorDataset(sensors, to_torch=True)
     dl = DataLoader(ds, batch_size=8, shuffle=True, collate_fn=lambda x: x)
 
-    # Plot 6 random sensors raw+aligned
-    fig, axs = plt.subplots(6,2, figsize=(12,12))
+    # Plot 6 random sensors raw (no aligned data anymore)
+    import matplotlib.pyplot as plt
+    fig, axs = plt.subplots(6,1, figsize=(10,8))
     picks = np.random.choice(len(sensors), size=6, replace=False)
     for i,p in enumerate(picks):
-        plot_sensor_signal(sensors[p], which='raw', ax=axs[i,0])
-        plot_sensor_signal(sensors[p], which='aligned', ax=axs[i,1])
+        plot_sensor_signal(sensors[p], which='raw', ax=axs[i])
     plt.tight_layout()
     plt.show()
 
     # Print one sensor details
     idx = 0
     s0 = sensors[idx]
-    print("Sensor 0 sample (first 20 aligned):", s0['aligned'][:20])
+    print("Sensor 0 sample (first 20 raw):", s0['raw_signal'][:20])
     print("Meta:", s0['meta'])
     print("Anomalies:", s0['anomalies'])
 
-    # Show aligned matrix summary
-    print("Aligned matrix shape:", aligned.shape)
-    print("Aligned matrix dtype:", aligned.dtype)
-    print("Aligned matrix min/max:", aligned.min(), aligned.max())
-
-    # Demonstrate using dataloader: print a batch's aligned shapes
+    # Demonstrate using dataloader: print a batch's raw shapes
     batch = next(iter(dl))
     print("Batch size:", len(batch))
     print("Example item keys:", batch[0].keys())
-    print("Example aligned tensor shape:", batch[0]['aligned'].shape)
-
-
+    print("Example raw tensor shape:", batch[0]['raw_signal'].shape)
 
 
 # =======================
