@@ -151,4 +151,173 @@ flowchart TB
         OVERFLOW --> OUT5[overflow_logits: N x N x L]
         G2 --> ATT[attention: N x N]
     end
+```
 
+
+**Contrastive Learning(pretrain)**
+
+```mermaid
+flowchart TB
+    subgraph PRETRAIN_Contrastive
+        POOL[Collect  raw, rate from all scenes] --> BATCH[Random batch]
+
+        BATCH --> LOOP1[For each sensor]
+        LOOP1 --> RAW[Convert raw to 1D tensor]
+        RAW --> AUG1[Aug1]
+        RAW --> AUG2[Aug2]
+
+        AUG1 --> ENC1[Encoder rate]
+        AUG2 --> ENC2[Encoder rate]
+
+        ENC1 --> Z1[z1 batch]
+        ENC2 --> Z2[z2 batch]
+
+        Z1 --> NTX[NT-Xent loss]
+        Z2 --> NTX
+
+        NTX --> OPT[Adam update]
+    end
+
+```
+
+
+
+**Full fine-tue Learning**
+
+```mermaid
+flowchart TB
+    subgraph Finetune
+        TRAIN[Train Dataset Scenes] --> LOADER[SceneDataLoader]
+
+        LOADER --> SCENE[Scene list]
+
+        SCENE --> GT[Build Ground Truth numpy->tensor]
+        GT --> GTD[Move GT to device]
+
+        SCENE --> MODEL[SensorStructureModel forward]
+        MODEL --> OUT[Outputs dict]
+
+        OUT --> SAN[Sanitize outputs nan->num]
+        GTD --> SANGT[Sanitize GT]
+
+        SAN --> LOSS[Compute all losses]
+        SANGT --> LOSS
+
+        LOSS --> CHECK[Check finite]
+        CHECK -->|finite| BACKWARD[Backward + Clip + Optim Step]
+        CHECK -->|not finite| SKIP[Skip step]
+
+        BACKWARD --> ACC[Accumulate loss mean]
+
+        ACC --> END1[Print epoch train loss]
+
+        subgraph Validation
+            VALDS[Val dataset] --> VALLOADER
+            VALLOADER --> VSC[V scene]
+            VSC --> VGT[GT build]
+            VSC --> VOUT[Model forward]
+            VGT --> MET[Metrics]
+            VOUT --> MET
+            MET --> END2[Print validation metrics]
+        end
+    end
+
+```
+
+
+
+
+** Module Structure - 전체 모델 구조 **
+``` mermaid
+flowchart LR
+    %% INPUT
+    SENS[Scene sensors list] --> RATESEL[Select encoder by raw_rate]
+
+    %% ENCODER
+    RATESEL --> ENC[RateEncoderTemporal]
+    ENC --> VECS[vec per sensor]
+    ENC --> TEMP[tfeat per sensor L x Emb]
+
+    %% BUILD X
+    VECS --> X[N x Emb]
+
+    %% GRAPH STACK
+    X --> G1[GraphLayer1]
+    G1 --> H1[N x Emb]
+
+    H1 --> G2[GraphLayer2]
+    G2 --> H2[N x Emb]
+    G2 --> ATT[attention N x N]
+
+    %% HEADS
+    H2 --> NODE[node head N x 3]
+    H2 --> BIT[bitmask head N x 16]
+
+    H2 --> PAIR[pair features N x N x 2Emb]
+
+    PAIR --> EDGE[edge head N x N]
+    PAIR --> ORDER[order head N x N x 2]
+
+    TEMP --> OVRCONV[overflow temporal conv stack]
+    OVRCONV --> OVR[overflow logits N x N x L]
+
+    %% OUTPUT
+    NODE --> O1[node_logits]
+    BIT --> O2[bitmask_logits]
+    EDGE --> O3[edge_logits]
+    ORDER --> O4[order_logits]
+    OVR --> O5[overflow_logits]
+    ATT --> O6[attention_matrix]
+
+```
+
+** Module Structure(Simple GraphLayer) **
+``` mermaid
+flowchart TB
+    subgraph SimpleGraphLayer
+        X[Input X N x Emb] --> Q[Linear -> Q]
+        X --> K[Linear -> K]
+        X --> V[Linear -> V]
+
+        Q --> MATMUL1[Q x K^T / sqrt Emb ]
+        K --> MATMUL1
+        MATMUL1 --> SOFT[Softmax row-wise]
+        SOFT --> ATT[Attention A N x N]
+
+        ATT --> MATMUL2[A x V]
+        V --> MATMUL2
+
+        MATMUL2 --> RES[Residual + X]
+        RES --> OUT_L[Linear]
+        OUT_L --> REL[ReLU]
+        REL --> OUT[Output H N x Emb]
+    end
+
+```
+
+** Module Structure(Rate Encoder Temporal) **
+```mermaid
+
+flowchart TB
+    subgraph RateEncoderTemporal
+        X[Input 1D time-series T] --> U1[Unsqueeze to 1x1xT]
+        U1 --> C1[Conv1d 1->Cc k7]
+        C1 --> R1[ReLU]
+        R1 --> C2[Conv1d Cc->Cc k5]
+        C2 --> R2[ReLU]
+
+        %% vector branch
+        R2 --> P1[AdaptiveAvgPool1d 1]
+        P1 --> S1[Squeeze]
+        S1 --> FC[Linear Cc->Emb]
+        FC --> Vec[Vector Emb]
+
+        %% temporal branch
+        R2 --> TP[AdaptiveAvgPool1d L bins]
+        TP --> PROJ[Conv1d Cc->Emb k1]
+        PROJ --> TFEAT[Squeeze and Permute L x Emb]
+
+        Vec --> OUT1(Output vec)
+        TFEAT --> OUT2(Output temporal)
+    end
+```
