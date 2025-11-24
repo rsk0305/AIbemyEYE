@@ -98,6 +98,113 @@ def gen_bits_field(seq_len, rate_hz, bit_width=8, params=None):
         vals |= (bits[b] << (start_bit + b)).astype(np.uint16)
     return vals, start_bit, start_bit + bit_width - 1
 
+
+# Realistic sensor data generation 11.24.
+def gen_1word_realistic(length, rate_hz):
+    t = np.arange(length) / rate_hz
+
+    # Baseline & drift
+    baseline = np.random.uniform(10000, 40000)
+    drift_rate = np.random.uniform(-5, 5) / rate_hz
+    drift = drift_rate * np.arange(length)
+
+    # Multi-frequency vibration
+    freqs = np.random.choice([3, 8, 15, 60, 120], size=np.random.randint(1, 3), replace=False)
+    vib = np.zeros(length)
+    for f in freqs:
+        A = np.random.uniform(50, 500)
+        phase = np.random.uniform(0, 2*np.pi)
+        vib += A * np.sin(2 * np.pi * f * t + phase)
+
+    # Mechanical resonance bump
+    if np.random.rand() < 0.5:
+        f_res = np.random.uniform(20, 40)
+        Q = np.random.uniform(3, 8)
+        resonance = 300 * np.sin(2*np.pi*f_res*t) * np.exp(-((t - t.mean())**2) * Q)
+    else:
+        resonance = 0
+
+    # Noise: white + pink
+    noise = np.random.normal(0, 20, length)
+    pink = np.cumsum(np.random.normal(0, 0.1, length))  # low-frequency drift
+
+    sig = baseline + drift + vib + resonance + noise + pink
+    return np.clip(sig, 0, 65535).astype(np.int64)
+
+def gen_2word_realistic(length, rate_hz):
+    t = np.arange(length) / rate_hz
+
+    base = np.random.uniform(10_000_000, 40_000_000)
+    slow = np.random.uniform(-2000, 2000) * np.linspace(0, 1, length)
+
+    # Low-frequency mechanical rotation / RPM simulation
+    f_rpm = np.random.uniform(1, 5)
+    vib = 20000 * np.sin(2*np.pi*f_rpm*t)
+
+    # High-frequency components
+    hf = np.random.uniform(1000, 5000) * np.sin(2*np.pi*50*t)
+
+    noise = np.random.normal(0, 2000, length)
+
+    raw32 = base + slow + vib + hf + noise
+    raw32 = np.mod(raw32.astype(np.int64), 2**32)
+
+    lsb = raw32 & 0xFFFF
+    msb = (raw32 >> 16) & 0xFFFF
+    return raw32, lsb.astype(np.int64), msb.astype(np.int64)
+
+def gen_mixed_bitword(T, 
+                      bit_prob=0.3, 
+                      bits_prob=0.5, 
+                      noise_bits=True):
+    """
+    하나의 16-bit 센서 워드를 생성.
+    bit(1bit) + bits(연속비트) 혼합 지원.
+
+    T : time length
+    bit_prob : 단일 비트를 넣을 확률
+    bits_prob : 연속된 bit 구간을 넣을 확률
+    """
+    word = np.zeros((T, 16), dtype=np.int32)
+
+    meta = {
+        "type": "mixed_bits",
+        "bit_flag": None,
+        "bits_range": None
+    }
+
+    # --- 1) 단일 bit flag 생성 ---
+    if np.random.rand() < bit_prob:
+        bit_pos = np.random.randint(0, 16)
+        meta["bit_flag"] = bit_pos
+        # random on/off 신호
+        flag_signal = np.random.choice([0, 1], size=T)
+        word[:, bit_pos] = flag_signal
+
+    # --- 2) multi-bit 구간 생성 ---
+    if np.random.rand() < bits_prob:
+        start = np.random.randint(0, 14)
+        end = np.random.randint(start + 1, 16)  # 최소 2bit 이상
+        meta["bits_range"] = (start, end)
+
+        # 카운터 또는 모드 변화처럼 생성
+        num_bits = end - start + 1
+        max_value = (1 << num_bits)
+
+        counter = np.random.randint(0, max_value, size=T)
+        for i in range(num_bits):
+            bit_channel = (counter >> i) & 1
+            word[:, start + i] = bit_channel
+
+    # --- 3) noise bits (현실계 유사) ---
+    if noise_bits:
+        noise = np.random.choice([0,1], size=(T,16), p=[0.98,0.02])
+        # 단, 이미 의미 있는 bit는 덮어쓰지 않음
+        mask = (word == 0)
+        word = word | (noise * mask)
+
+    return word, meta
+
 # -----------------------------
 # Anomaly injection
 # -----------------------------
@@ -186,14 +293,17 @@ def generate_multimodal_data_advanced(
         meta = {}
         anomalies = []
         if t == 1:
-            raw = gen_1word_continuous(raw_len, rate)
+            # raw = gen_1word_continuous(raw_len, rate)
+            raw = gen_1word_realistic(raw_len, rate)
+            
             raw, segs = inject_anomalies(raw, rate, anomaly_config=anomaly_cfg)
             anomalies = segs
             meta['type'] = '1word'
             meta['bit_start'] = 0
             meta['bit_end'] = 15
         elif t == 2:
-            lsb, msb, raw32 = gen_2word_32bit_pair(raw_len, rate)
+            # lsb, msb, raw32 = gen_2word_32bit_pair(raw_len, rate)
+            lsb, msb, raw32 = gen_2word_realistic(raw_len, rate)
             # choose whether the pair is stored consecutively (msb next to lsb) or scattered:
             # We will store only one sensor line per 16-bit row in the final per-sensor list
             # but mark pair index in meta -> here we generate pair as atomic and later expand in dataset if needed
@@ -208,7 +318,8 @@ def generate_multimodal_data_advanced(
         elif t == 3:
             # pick width and start bit but ensure sequential bits assumption
             bit_width = np.random.randint(1, 16)
-            vals, sbit, ebit = gen_bits_field(raw_len, rate, bit_width)
+            vals, sbit, ebit = gen_mixed_bitword(bit_prob=0.5, bits_prob=0.5, noise_bits=True)
+            # vals, sbit, ebit = gen_bits_field(raw_len, rate, bit_width)
             raw, segs = inject_anomalies(vals, rate, anomaly_config=anomaly_cfg)
             anomalies = segs
             meta['type'] = 'bits'
@@ -448,8 +559,8 @@ def generate_multimodal_data(
 # -----------------------------
 if __name__ == "__main__":
     # parameters
-    N = 60
-    duration = 2.0  # seconds
+    N = 200
+    duration = 1000.0  # seconds
     target_T = 400  # aligned length
     seed = 123
 
@@ -464,9 +575,9 @@ if __name__ == "__main__":
         duration_sec=duration,
         rates=[2000, 200, 50],
         target_T=target_T,
-        prob_1word=0.4,
-        prob_2word=0.3,
-        prob_bits=0.3,
+        prob_1word=0.89,
+        prob_2word=0.01,
+        prob_bits=0.1,
         seed=seed,
         anomaly_cfg=anomaly_cfg,
         use_multirate=True
