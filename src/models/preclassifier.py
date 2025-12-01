@@ -13,7 +13,9 @@ import torch.nn.functional as F
 
 from src.utils.utils import *
 from src.utils.mdls import *
-
+from src.utils.losses import *
+from src.utils.scene import *
+ 
 # -------------------------
 # Rate-specific Encoder (outputs: pooled vector + temporal compressed feature)
 # -------------------------

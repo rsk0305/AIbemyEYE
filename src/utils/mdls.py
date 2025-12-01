@@ -6,9 +6,24 @@ import torch
 import torch.nn as nn
 
 import os
+
+from datetime import datetime
+
+
 # -------------------------
 # Checkpoint utilities
 # -------------------------
+
+def get_timestamp():
+
+    # 1. 현재 날짜와 시간 가져오기
+    now = datetime.now()
+
+    # 2. 원하는 형식(YYMMDDHHMM)으로 포맷팅
+    # %y: 연도 (두 자리), %m: 월, %d: 일, %H: 시 (24시간제), %M: 분
+    return now.strftime("%y%m%d%H%M") # 예: '2512020811' (25년 12월 2일 08시 11분)
+
+
 def save_checkpoint(path, model: nn.Module, optimizer: torch.optim.Optimizer=None, epoch:int=None, extra:dict=None):
     ckpt = {'model_state': model.state_dict()}
     if optimizer is not None:
@@ -18,8 +33,12 @@ def save_checkpoint(path, model: nn.Module, optimizer: torch.optim.Optimizer=Non
     if extra is not None:
         ckpt['extra'] = extra
     os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
-    torch.save(ckpt, path)
-    print(f"[Checkpoint] saved {path}")
+
+    timestamp = get_timestamp()
+    name, extension = os.path.splitext(path)
+    new_filename = f"{name}_{timestamp}{extension}"
+    torch.save(ckpt, new_filename)
+    print(f"[Checkpoint] saved {new_filename})")
 
 def load_checkpoint(path, model: nn.Module, optimizer: torch.optim.Optimizer=None, map_location=None):
     if not os.path.exists(path):
