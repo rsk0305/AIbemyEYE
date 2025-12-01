@@ -1,0 +1,229 @@
+"""
+Validation script for pre_classifier.py
+Tests heuristic and deep learning classification methods.
+"""
+
+import numpy as np
+import torch
+from pre_classifier import SensorPreClassifier, extract_features_numpy, classify_heuristic
+
+def test_heuristic_classification():
+    """Test heuristic classification on synthetic signals."""
+    print("="*70)
+    print("TEST 1: Heuristic Classification")
+    print("="*70 + "\n")
+    
+    # Generate test signals
+    np.random.seed(42)
+    
+    # 1word: smooth, continuous signal
+    t = np.linspace(0, 1, 200)
+    sig_1word = 20000 * np.sin(2 * np.pi * 3 * t) + 30000 + np.random.normal(0, 100, 200)
+    sig_1word = np.clip(sig_1word, 0, 65535).astype(np.int64)
+    
+    # 2word: large range with drift
+    base = np.linspace(10000000, 40000000, 200)
+    sig_2word_raw = base + 5000 * np.sin(2 * np.pi * 0.5 * t) + np.random.normal(0, 1000, 200)
+    sig_2word_raw = np.mod(sig_2word_raw.astype(np.int64), 2**32)
+    sig_2word = (sig_2word_raw & 0xFFFF).astype(np.int64)
+    
+    # bits: sparse signal with few unique values
+    sig_bits = np.zeros(200, dtype=np.int64)
+    sig_bits[10:30] = (1 << 5)  # Bit 5
+    sig_bits[60:80] = (1 << 3)  # Bit 3
+    noise_pattern = np.random.choice([0, 1], 200, p=[0.95, 0.05])
+    sig_bits += noise_pattern * (1 << 7)  # Bit 7 with noise
+    
+    # Extract features and classify
+    signals = [
+        ('1word', sig_1word),
+        ('2word', sig_2word),
+        ('bits', sig_bits)
+    ]
+    
+    correct = 0
+    for true_type, signal in signals:
+        features = extract_features_numpy(signal, rate_hz=200)
+        pred_type, confidence = classify_heuristic(features)
+        
+        is_correct = (true_type == pred_type or 
+                     (true_type == '2word' and pred_type == '2word') or
+                     (true_type in ['bits'] and pred_type == 'bits'))
+        
+        status = "✓ PASS" if is_correct else "✗ FAIL"
+        print(f"{status} | True: {true_type:10s} | Pred: {pred_type:10s} | Conf: {confidence:.3f}")
+        
+        print(f"       Features:")
+        print(f"         - range: {features['range']:.0f}")
+        print(f"         - std: {features['std']:.0f}")
+        print(f"         - autocorr_lag1: {features['autocorr_lag1']:.3f}")
+        print(f"         - unique_ratio: {features['unique_ratio']:.4f}")
+        print(f"         - entropy: {features['entropy']:.3f}")
+        
+        if is_correct:
+            correct += 1
+        print()
+    
+    accuracy = correct / len(signals)
+    print(f"Heuristic Accuracy: {accuracy:.2%}\n")
+    return accuracy
+
+
+def test_deep_learning_classification():
+    """Test deep learning classification."""
+    print("="*70)
+    print("TEST 2: Deep Learning Classification (Hybrid Method)")
+    print("="*70 + "\n")
+    
+    np.random.seed(42)
+    device = 'cpu'
+    
+    # Initialize classifier
+    classifier = SensorPreClassifier(use_deep_learning=True, device=device)
+    
+    # Generate test signals (same as before)
+    t = np.linspace(0, 1, 200)
+    sig_1word = 20000 * np.sin(2 * np.pi * 3 * t) + 30000 + np.random.normal(0, 100, 200)
+    sig_1word = np.clip(sig_1word, 0, 65535).astype(np.int64)
+    
+    base = np.linspace(10000000, 40000000, 200)
+    sig_2word_raw = base + 5000 * np.sin(2 * np.pi * 0.5 * t) + np.random.normal(0, 1000, 200)
+    sig_2word_raw = np.mod(sig_2word_raw.astype(np.int64), 2**32)
+    sig_2word = (sig_2word_raw & 0xFFFF).astype(np.int64)
+    
+    sig_bits = np.zeros(200, dtype=np.int64)
+    sig_bits[10:30] = (1 << 5)
+    sig_bits[60:80] = (1 << 3)
+    noise_pattern = np.random.choice([0, 1], 200, p=[0.95, 0.05])
+    sig_bits += noise_pattern * (1 << 7)
+    
+    signals = [
+        ('1word', sig_1word),
+        ('2word', sig_2word),
+        ('bits', sig_bits)
+    ]
+    
+    correct = 0
+    for true_type, signal in signals:
+        result = classifier.classify_signal(signal, use_hybrid=True)
+        pred_type = result['type']
+        confidence = result['confidence']
+        method = result['method']
+        
+        is_correct = (true_type == pred_type or 
+                     (true_type == '2word' and pred_type == '2word') or
+                     (true_type in ['bits'] and pred_type == 'bits'))
+        
+        status = "✓ PASS" if is_correct else "✗ FAIL"
+        print(f"{status} | True: {true_type:10s} | Pred: {pred_type:10s} | Conf: {confidence:.3f}")
+        print(f"       Method: {method}")
+        print(f"       Heuristic: {result.get('heuristic_type', 'N/A'):10s} ({result.get('heuristic_conf', 0):.3f})")
+        if 'dl_type' in result:
+            print(f"       Deep Learning: {result['dl_type']:10s} ({result['dl_conf']:.3f})")
+        
+        if is_correct:
+            correct += 1
+        print()
+    
+    accuracy = correct / len(signals)
+    print(f"Deep Learning Accuracy: {accuracy:.2%}\n")
+    return accuracy
+
+
+def test_on_synthetic_scenes():
+    """Test on synthetic scenes generated by main_data_generator."""
+    print("="*70)
+    print("TEST 3: Classification on Synthetic Scenes")
+    print("="*70 + "\n")
+    
+    try:
+        from main_data_generator import generate_multimodal_data_advanced
+        
+        device = 'cpu'
+        classifier = SensorPreClassifier(use_deep_learning=True, device=device)
+        
+        print("Generating synthetic scenes...")
+        scenes = []
+        for seed in range(5):
+            sensors_by_rate, sensors_flat = generate_multimodal_data_advanced(
+                num_sensors=8,
+                duration_sec=1.0,
+                rates=[200],
+                prob_1word=0.5,
+                prob_2word=0.25,
+                prob_bits=0.25,
+                seed=seed
+            )
+            scene = []
+            for s in sensors_flat:
+                sensor_dict = {
+                    'id': s['id'],
+                    'type': s['meta']['type'],
+                    'raw_rate': s['raw_rate'],
+                    'raw': s['raw_signal'].astype(np.float32),
+                    'meta': s['meta']
+                }
+                scene.append(sensor_dict)
+            scenes.append(scene)
+        
+        print(f"Generated {len(scenes)} scenes with {sum(len(s) for s in scenes)} total sensors\n")
+        
+        # Collect predictions
+        predictions = []
+        ground_truth = []
+        
+        for scene_idx, scene in enumerate(scenes):
+            for sensor in scene[:3]:  # Show first 3 sensors per scene
+                signal = sensor['raw']
+                true_type = sensor['type']
+                
+                # Normalize ground truth type
+                if true_type == '1word':
+                    true_label = '1word'
+                elif '2word' in true_type:
+                    true_label = '2word'
+                else:
+                    true_label = 'bits'
+                
+                result = classifier.classify_signal(signal)
+                pred_type = result['type']
+                
+                predictions.append(pred_type)
+                ground_truth.append(true_label)
+                
+                match = pred_type == true_label
+                status = "✓" if match else "✗"
+                print(f"  {status} Scene {scene_idx} Sensor: True={true_label:10s} Pred={pred_type:10s} Conf={result['confidence']:.3f}")
+        
+        # Calculate accuracy
+        predictions = np.array(predictions)
+        ground_truth = np.array(ground_truth)
+        accuracy = np.mean(predictions == ground_truth)
+        
+        print(f"\nScene Classification Accuracy: {accuracy:.2%}\n")
+        return accuracy
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return 0.0
+
+
+if __name__ == "__main__":
+    print("\n" + "="*70)
+    print("PRE-CLASSIFIER VALIDATION SUITE")
+    print("="*70 + "\n")
+    
+    acc1 = test_heuristic_classification()
+    acc2 = test_deep_learning_classification()
+    acc3 = test_on_synthetic_scenes()
+    
+    print("\n" + "="*70)
+    print("SUMMARY")
+    print("="*70)
+    print(f"Heuristic Classification: {acc1:.2%}")
+    print(f"Deep Learning Classification: {acc2:.2%}")
+    print(f"Scene Classification: {acc3:.2%}")
+    print(f"Average Accuracy: {(acc1 + acc2 + acc3) / 3:.2%}")
+    print("="*70 + "\n")

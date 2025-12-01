@@ -572,7 +572,7 @@ if __name__ == "__main__":
     # parameters
     N = 200
     duration = 100.0  # seconds
-    rates = [2000, 200, 50]
+    rates = [200]  # Single rate: 200 Hz
     seed = 123
 
     anomaly_cfg = {

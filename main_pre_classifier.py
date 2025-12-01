@@ -48,10 +48,11 @@ def load_checkpoint(path, model: nn.Module, optimizer: torch.optim.Optimizer=Non
 # -------------------------
 # Utility / Data generator (simple)
 # -------------------------
-def example_scene_generator(num_sensors=16, duration_sec=1.0, rates=[2000,200,50],
-                            prob_1word=0.7, prob_2word=0.15, prob_bits=0.15, seed=None):
+def example_scene_generator(num_sensors=16, duration_sec=1.0, rates=[200],
+                            prob_1word=0.5, prob_2word=0.25, prob_bits=0.25, seed=None):
     """
     Produce a scene list. For 2word, create two node entries with meta['raw32'].
+    All sensors generated at rate=200 Hz (unified rate).
     """
     if seed is not None:
         np.random.seed(seed)
@@ -227,7 +228,7 @@ class SimpleGraphLayer(nn.Module):
 # Full Model (encoders per rate + GNN + heads)
 # -------------------------
 class SensorStructureModel(nn.Module):
-    def __init__(self, rates=[2000,200,50], emb_dim=128, time_bins=32, device='cpu'):
+    def __init__(self, rates=[200], emb_dim=128, time_bins=32, device='cpu'):
         super().__init__()
         self.device = torch.device(device)
         self.rates = sorted(rates)
@@ -710,7 +711,7 @@ if __name__ == "__main__":
     scenes_train = [ example_scene_generator(num_sensors=12, duration_sec=1.0, seed=i) for i in range(100) ]
     scenes_val = [ example_scene_generator(num_sensors=12, duration_sec=1.0, seed=100+i) for i in range(20) ]
     # Pretrain: collect encoders dict
-    model = SensorStructureModel(rates=[2000,200,50], emb_dim=128, time_bins=32, device=device)
+    model = SensorStructureModel(rates=[200], emb_dim=128, time_bins=32, device=device)
 
     # Pretrain encoders
     print("=== Contrastive pretrain encoders ===")
@@ -733,13 +734,104 @@ if __name__ == "__main__":
     res_val = evaluate_model(model, val_ds, device=device)
     # Load into fresh model and continue training for comparison
     print("=== Reload checkpoint and continue training (compare) ===")
-    model2 = SensorStructureModel(rates=[2000,200,50], emb_dim=128, time_bins=32, device=device)
+    model2 = SensorStructureModel(rates=[200], emb_dim=128, time_bins=32, device=device)
     load_checkpoint(ckpt_path, model2, map_location=device)
     # continue training few more epochs
     finetune_full(model2, train_ds, val_ds, device=device, epochs=3, lr=5e-4)
     print("=== Post-resume evaluation on validation set ===")
     res_val2 = evaluate_model(model2, val_ds, device=device)
     print("Summary: val before resume:", res_val, " val after resume:", res_val2)
+    
+    # ===== PRE-CLASSIFIER INTEGRATION =====
+    print("\n" + "="*80)
+    print("=== PRE-CLASSIFIER: SENSOR TYPE CLASSIFICATION ===")
+    print("="*80)
+    
+    # Import pre_classifier
+    try:
+        from pre_classifier import SensorPreClassifier
+        
+        print("\n[Pre-classifier] Initializing...")
+        pre_classifier = SensorPreClassifier(use_deep_learning=True, device=device)
+        
+        # Convert scenes to pre_classifier format
+        def convert_scenes_format(scenes_torch):
+            converted = []
+            for scene_torch in scenes_torch:
+                scene_converted = []
+                for s in scene_torch:
+                    raw_field = s['raw']
+                    if isinstance(raw_field, torch.Tensor):
+                        raw_np = raw_field.detach().cpu().numpy()
+                    else:
+                        raw_np = np.asarray(raw_field)
+                    
+                    sensor_dict = {
+                        'id': s['id'],
+                        'type': s['type'],
+                        'raw_rate': s['raw_rate'],
+                        'raw': raw_np.astype(np.float32),
+                        'meta': s.get('meta', {})
+                    }
+                    scene_converted.append(sensor_dict)
+                converted.append(scene_converted)
+            return converted
+        
+        # Convert train/val scenes
+        scenes_train_for_preclassifier = convert_scenes_format(scenes_train)
+        scenes_val_for_preclassifier = convert_scenes_format(scenes_val)
+        
+        # Train pre_classifier
+        print("\n[Pre-classifier] Training on train set...")
+        pre_classifier.train_on_scenes(scenes_train_for_preclassifier, device=device, 
+                                       epochs=10, lr=1e-3, batch_size=64)
+        
+        # Validate pre_classifier
+        print("\n[Pre-classifier] Validating on validation set...")
+        preclassifier_metrics = pre_classifier.validate_on_scenes(
+            scenes_val_for_preclassifier, device=device
+        )
+        
+        print("\n[Pre-classifier] Validation Results:")
+        for key, value in preclassifier_metrics.items():
+            print(f"  {key:20s}: {value:.4f}")
+        
+        # Demo on sample scenes
+        print("\n[Pre-classifier] Demo Classification on Sample Sensors:")
+        demo_count = 0
+        for scene_idx, scene in enumerate(scenes_val_for_preclassifier[:2]):
+            print(f"\n  Scene {scene_idx}:")
+            for sensor_idx, sensor in enumerate(scene[:5]):
+                signal = sensor['raw']
+                true_type = sensor['type']
+                
+                result = pre_classifier.classify_signal(signal)
+                pred_type = result['type']
+                confidence = result['confidence']
+                
+                match = "✓" if pred_type in true_type or true_type in pred_type else "✗"
+                print(f"    {match} Sensor {sensor_idx}: True={true_type:15s} " +
+                      f"Pred={pred_type:12s} Conf={confidence:.3f} Method={result['method']}")
+                
+                demo_count += 1
+                if demo_count >= 15:
+                    break
+            if demo_count >= 15:
+                break
+        
+        print("\n[Pre-classifier] Summary:")
+        print(f"  - Accuracy: {preclassifier_metrics.get('accuracy', 0.0):.4f}")
+        print(f"  - Successfully classified {len(scenes_val_for_preclassifier)} validation scenes")
+        print(f"  - Classification methods: heuristic + deep learning (hybrid)")
+        
+    except ImportError as e:
+        print(f"[Warning] Could not import pre_classifier: {e}")
+        print("         Skipping pre-classifier integration.")
+    except Exception as e:
+        print(f"[Error] Pre-classifier integration failed: {e}")
+        import traceback
+        traceback.print_exc()
+    
     # Quick hardware-aware tips
     print("\nHardware tips:")
     print(" - Use device='cuda' (Titan X) for heavy ops; enable mixed-precision (autocast used).")
