@@ -218,10 +218,108 @@ class TypeClassifierNN(nn.Module):
             
         return self.class_names[pred_idx], confidence
 
+class AttentionPooling(nn.Module):
+    """Self-attention pooling layer."""
+    def __init__(self, dim):
+        super().__init__()
+        self.attn = nn.Linear(dim, 1)
+
+    def forward(self, x):  # (B, T, D)
+        weights = torch.softmax(self.attn(x), dim=1)  # (B,T,1)
+        return torch.sum(weights * x, dim=1)  # (B,D)
+
+class ImprovedTypeClassifier(nn.Module):
+    def __init__(
+        self,
+        input_dim=1,
+        emb_dim=128,
+        lstm_dim=128,
+        num_transformer_layers=2,
+        num_classes=3,
+        proj_dim=64,
+        device = 'cpu'
+    ):
+        super().__init__()
+        
+        self.device = torch.device(device)
+        # --- CNN Feature Extractor ---
+        self.conv = nn.Sequential(
+            nn.Conv1d(input_dim, 32, 5, padding=2),
+            nn.BatchNorm1d(32),
+            nn.GELU(),
+            nn.Conv1d(32, emb_dim, 5, padding=2),
+            nn.BatchNorm1d(emb_dim),
+            nn.GELU(),
+        )
+        
+        # --- BiLSTM for sequential understanding ---
+        self.lstm = nn.LSTM(
+            emb_dim, lstm_dim, bidirectional=True, batch_first=True
+        )
+        
+        # --- Attention Pooling ---
+        self.pool = AttentionPooling(lstm_dim * 2)
+        
+        # --- Transformer Encoder for structural invariance ---
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=lstm_dim * 2,
+            nhead=4,
+            batch_first=True
+        )
+        self.transformer = nn.TransformerEncoder(
+            encoder_layer, num_layers=num_transformer_layers
+        )
+        
+        # --- Classification Head ---
+        self.class_head = nn.Sequential(
+            nn.Linear(lstm_dim * 2, lstm_dim),
+            nn.GELU(),
+            nn.LayerNorm(lstm_dim),
+            nn.Dropout(0.2),
+            nn.Linear(lstm_dim, num_classes)
+        )
+
+        # --- Contrastive Projection Head (optional) ---
+        self.projector = nn.Sequential(
+            nn.Linear(lstm_dim * 2, proj_dim),
+            nn.LayerNorm(proj_dim)
+        )
+
+    def forward(self, x, return_projection=False):
+        """
+        x: (B,T)
+        return_projection: If True returns embedding for contrastive learning.
+        """
+        if x.dim() == 2:
+            x = x.unsqueeze(1)  # (B,1,T)
+        
+        # CNN → (B, emb_dim, T)
+        h = self.conv(x)
+        
+        # reorder for LSTM → (B,T,emb_dim)
+        h = h.transpose(1, 2)
+        
+        # BiLSTM
+        h, _ = self.lstm(h)
+
+        # Transformer Encoder for token-level refinement
+        h = self.transformer(h)
+
+        # Self-attention pooling → (B,D)
+        pooled = self.pool(h)
+
+        logits = self.class_head(pooled)
+
+        if return_projection:
+            proj = self.projector(pooled)
+            return logits, proj
+
+        return logits
 
 # ========================
 # Pre-classifier Integration
 # ========================
+
 
 class SensorPreClassifier:
     """
