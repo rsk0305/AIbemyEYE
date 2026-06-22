@@ -1,4 +1,4 @@
-# AIbemyEYE
+﻿# A_EYE (Anomaly Examination for Yielded Elements)
 
 Stage 0 — 전제/데이터 파이프라인 준비 (필수)
 
@@ -615,3 +615,5 @@ flowchart TB
         TFEAT --> OUT2(Output temporal)
     end
 ```
+
+

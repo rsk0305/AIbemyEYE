@@ -1,4 +1,4 @@
-"""
+﻿"""
 Pre-classifier for sensor data type classification.
 Classifies sensor signals into: 1word, 2word, or bits.
 Uses deep learning model with rate-specific encoders and graph neural network.
@@ -575,7 +575,7 @@ if __name__ == "__main__":
     import sys
     
     # Import data generator
-    sys.path.insert(0, '/workspaces/AIbemyEYE')
+    sys.path.insert(0, '/workspaces/A_EYE')
     from main_data_generator import generate_multimodal_data_advanced
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -666,3 +666,4 @@ if __name__ == "__main__":
                 print(f"      DL: {result['dl_type']} ({result['dl_conf']:.3f})")
     
     print("\n=== Pre-classifier demo complete ===")
+

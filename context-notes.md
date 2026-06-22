@@ -10,3 +10,15 @@
 - `scripts/stage1_generate_data.py`는 `save_stage1_data`를 import하지만, 현재 `src/data/data_generator.py`에는 해당 함수 선언이 보이지 않고 저장 코드가 `return` 이후에 위치해 실행되지 않는 구조로 보인다.
 - `requirements.txt`에는 `scipy`와 `tqdm`이 빠져 있지만 코드에서는 `main_data_generator.py`와 Stage 1 학습 스크립트가 각각 사용한다.
 - 무거운 학습은 실행하지 않았고, Python 문법 검증은 `compileall`로 통과했다.
+
+## 2026-06-23 프로젝트명 변경
+
+- 새 프로젝트명은 `A_EYE`이고 풀네임은 `Anomaly Examination for Yielded Elements`이다.
+- 현재 이름 표기는 주요 문서, UI 설계서, 패키지 주석, `pre_classifier.py`의 워크스페이스 경로 표기에 있었다.
+- `recovered_conversation.md`는 과거 대화 복구 로그라 실제 프로젝트 표기 변경 대상에서 제외한다.
+- 실제 폴더명 변경은 워크스페이스 루트의 부모 디렉터리 작업이므로 별도 권한이 필요하다.
+
+
+- `recovered_conversation.md`를 제외한 현재 관리 대상 파일에서 이전 프로젝트명 문자열이 남지 않는 것을 확인했다.
+- 변경된 Python 파일은 `python -m py_compile pre_classifier.py src\__init__.py src\data\__init__.py`로 문법 검증을 통과했다.
+- Git 기준 untracked 상태였던 프로젝트 문서들은 작업 공간에서는 새 프로젝트명으로 갱신했지만, 파일 전체를 새로 추가하는 커밋이 되므로 이번 커밋 대상에서 제외한다.
