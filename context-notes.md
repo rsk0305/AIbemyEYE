@@ -22,3 +22,5 @@
 - `recovered_conversation.md`를 제외한 현재 관리 대상 파일에서 이전 프로젝트명 문자열이 남지 않는 것을 확인했다.
 - 변경된 Python 파일은 `python -m py_compile pre_classifier.py src\__init__.py src\data\__init__.py`로 문법 검증을 통과했다.
 - Git 기준 untracked 상태였던 프로젝트 문서들은 작업 공간에서는 새 프로젝트명으로 갱신했지만, 파일 전체를 새로 추가하는 커밋이 되므로 이번 커밋 대상에서 제외한다.
+- 루트 폴더 rename은 `Move-Item`과 `cmd ren` 모두 `The process cannot access the file because it is being used by another process.` 오류로 실패했다.
+- 현재 Codex 세션이나 다른 프로세스가 기존 워크스페이스 폴더를 잡고 있는 상태로 판단된다.
