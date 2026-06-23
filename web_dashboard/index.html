@@ -1,0 +1,141 @@
+﻿<!-- A_EYE 실시간 점검 대시보드 화면입니다. -->
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A_EYE Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-block">
+      <div class="brand-mark">AE</div>
+      <div>
+        <h1>A_EYE Sensor Health Inspector</h1>
+        <p id="sourceLabel">orchestrator-sim</p>
+      </div>
+    </div>
+    <div class="status-strip">
+      <span id="connectionState" class="status-pill status-wait">연결 대기</span>
+      <span id="runState" class="status-pill">정지</span>
+      <span id="stepBadge" class="metric-chip">step 0</span>
+    </div>
+    <nav class="top-actions" aria-label="대시보드 제어">
+      <button id="startBtn" class="ghost-button" type="button">Start</button>
+      <button id="stopBtn" class="ghost-button" type="button">Stop</button>
+      <button id="resetBtn" class="solid-button" type="button">Reset</button>
+    </nav>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="panel sensor-panel" aria-labelledby="sensorTitle">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Sensor matrix</p>
+          <h2 id="sensorTitle">200-channel live map</h2>
+        </div>
+        <div class="count-row">
+          <span><b id="normalCount">0</b> 정상</span>
+          <span><b id="warningCount">0</b> 경고</span>
+          <span><b id="alarmCount">0</b> 이상</span>
+        </div>
+      </div>
+      <div id="sensorGrid" class="sensor-grid" role="list" aria-label="센서 상태 목록"></div>
+    </section>
+
+    <section class="panel score-panel" aria-labelledby="scoreTitle">
+      <div class="panel-heading compact-heading">
+        <div>
+          <p class="eyebrow">Anomaly stream</p>
+          <h2 id="scoreTitle">Score and threshold</h2>
+        </div>
+        <div class="score-readout">
+          <span id="scoreValue">0.00</span>
+          <small id="thresholdValue">threshold 0.00</small>
+        </div>
+      </div>
+      <canvas id="scoreChart" class="chart" width="900" height="300" aria-label="이상 점수 추이"></canvas>
+    </section>
+
+    <section class="panel alarm-panel" aria-labelledby="alarmTitle">
+      <div class="panel-heading compact-heading">
+        <div>
+          <p class="eyebrow">Alarm console</p>
+          <h2 id="alarmTitle">Fault ranking</h2>
+        </div>
+        <span id="scenarioBadge" class="scenario-badge">normal</span>
+      </div>
+      <div id="alarmBanner" class="alarm-banner idle" role="status" aria-live="polite" aria-atomic="true">정상 감시 중</div>
+      <ol id="faultList" class="fault-list"></ol>
+      <pre id="diagnosticReport" class="diagnostic-report"></pre>
+    </section>
+
+    <section class="panel drift-panel" aria-labelledby="driftTitle">
+      <div class="panel-heading compact-heading">
+        <div>
+          <p class="eyebrow">Concept drift</p>
+          <h2 id="driftTitle">CLA monitor</h2>
+        </div>
+        <strong id="driftValue">0.00</strong>
+      </div>
+      <div class="meter-track" aria-label="드리프트 게이지">
+        <div id="driftMeter" class="meter-fill"></div>
+      </div>
+      <div class="buffer-grid">
+        <div>
+          <span id="bufferCount">0 / 0</span>
+          <small>online buffer</small>
+        </div>
+        <div>
+          <span id="feedbackCount">0 / 0</span>
+          <small>feedback</small>
+        </div>
+        <div>
+          <span id="modelReady">off</span>
+          <small>model ensemble</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel detail-panel" aria-labelledby="detailTitle">
+      <div class="panel-heading compact-heading">
+        <div>
+          <p class="eyebrow">Selected sensor</p>
+          <h2 id="detailTitle">S000 waveform</h2>
+        </div>
+        <div class="detail-meta">
+          <span id="selectedType">1word</span>
+          <span id="selectedRate">200Hz</span>
+        </div>
+      </div>
+      <canvas id="sensorChart" class="chart small-chart" width="900" height="210" aria-label="선택 센서 파형"></canvas>
+    </section>
+
+    <section class="panel feedback-panel" aria-labelledby="feedbackTitle">
+      <div class="panel-heading compact-heading">
+        <div>
+          <p class="eyebrow">Human feedback</p>
+          <h2 id="feedbackTitle">Operator control</h2>
+        </div>
+        <span id="lastFeedback">none</span>
+      </div>
+      <div class="feedback-actions">
+        <button id="trueAlarmBtn" class="solid-button danger" type="button">True alarm</button>
+        <button id="falseAlarmBtn" class="ghost-button" type="button">False alarm</button>
+      </div>
+      <label class="threshold-control" for="thresholdSlider">
+        <span>Manual threshold</span>
+        <output id="thresholdOutput">2.50</output>
+      </label>
+      <div class="threshold-row">
+        <input id="thresholdSlider" type="range" min="0.5" max="10" step="0.05" value="2.5">
+        <button id="applyThresholdBtn" class="solid-button" type="button">Apply</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
+
