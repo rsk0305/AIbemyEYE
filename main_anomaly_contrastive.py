@@ -194,15 +194,12 @@ class SimpleGNN(nn.Module):
 class FusionTransformer(nn.Module):
     def __init__(self, input_dim: int, nhead: int = 4, num_layers: int = 2, dim_feedforward: int = 512):
         super().__init__()
-        encoder_layer = nn.TransformerEncoderLayer(d_model=input_dim, nhead=nhead, dim_feedforward=dim_feedforward)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=input_dim, nhead=nhead, dim_feedforward=dim_feedforward, batch_first=True)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x: (B, Seq, D) -> Transformer expects (Seq, B, D)
-        x_t = x.permute(1, 0, 2)
-        out = self.transformer(x_t)
-        out = out.permute(1, 0, 2)
-        # optionally pool
+        # x: (B, Seq, D)
+        out = self.transformer(x)
         return out.mean(dim=1)
 
 # ------------------------ Projection / Heads ------------------------------
@@ -258,8 +255,8 @@ class MultiModalAnomalyModel(nn.Module):
         # instantiate modality encoders
         self.high_enc = HighRateEncoder(in_ch=config['high_ch'], out_dim=config['enc_dim'])
         self.mid_enc = MidRateEncoder(in_ch=config['mid_ch'], out_dim=config['enc_dim'])
-        self.low_enc = LowRateEncoder(in_dim=config['low_dim'], out_dim=config['enc_dim']//2)
-        self.bit_enc = BitFieldEncoder(bit_len=config['bit_len'], out_dim=config['enc_dim']//4)
+        self.low_enc = LowRateEncoder(in_dim=config['low_dim'], out_dim=config['enc_dim'])
+        self.bit_enc = BitFieldEncoder(bit_len=config['bit_len'], out_dim=config['enc_dim'])
 
         # optional graph fusion
         self.gnn = SimpleGNN(in_dim=config['enc_dim'], hidden=128, out_dim=config['enc_dim'])
@@ -428,10 +425,52 @@ def compute_scores(model: nn.Module, dataloader: DataLoader, device: torch.devic
     s = (maha - maha.mean()) / (maha.std() + 1e-9) + (recons - recons.mean()) / (recons.std() + 1e-9)
     return s.numpy()
 
-# Placeholder EVT thresholding (recommend using scipy / pyculiarity etc.)
-def evt_threshold(scores: np.ndarray, q: float = 0.995) -> float:
-    # simple percentile fallback
-    return float(np.quantile(scores, q))
+def robust_zscore(values: np.ndarray) -> np.ndarray:
+    """Median/MAD 기반 robust z-score를 계산합니다."""
+    arr = np.asarray(values, dtype=float)
+    median = np.median(arr)
+    mad = np.median(np.abs(arr - median))
+    scale = 1.4826 * mad if mad > 0 else np.std(arr)
+    if scale <= 0:
+        return np.zeros_like(arr)
+    return (arr - median) / (scale + 1e-12)
+
+
+def evt_threshold(scores: np.ndarray, q: float = 0.995, tail_q: float = 0.95, min_tail: int = 20) -> float:
+    """
+    정상 검증 점수의 상위 꼬리에 GPD를 맞춰 threshold를 계산합니다.
+
+    SciPy가 없거나 꼬리 샘플이 부족하면 percentile threshold로 fallback합니다.
+    """
+    arr = np.asarray(scores, dtype=float)
+    arr = arr[np.isfinite(arr)]
+    if arr.size == 0:
+        raise ValueError("scores must contain at least one finite value")
+
+    percentile_fallback = float(np.quantile(arr, q))
+    tail_base = float(np.quantile(arr, tail_q))
+    exceedances = arr[arr > tail_base] - tail_base
+    if exceedances.size < min_tail:
+        return percentile_fallback
+
+    try:
+        from importlib import metadata
+
+        np_version = tuple(int(part) for part in np.__version__.split('.')[:2])
+        scipy_version = tuple(int(part) for part in metadata.version('scipy').split('.')[:2])
+        if np_version >= (2, 3) and scipy_version < (1, 15):
+            return percentile_fallback
+
+        from scipy.stats import genpareto
+
+        shape, loc, scale = genpareto.fit(exceedances, floc=0)
+        tail_prob = max((1.0 - q) / max(1.0 - tail_q, 1e-12), 1e-12)
+        tail_threshold = genpareto.ppf(1.0 - tail_prob, shape, loc=loc, scale=scale)
+        if not np.isfinite(tail_threshold):
+            return percentile_fallback
+        return float(tail_base + tail_threshold)
+    except Exception:
+        return percentile_fallback
 
 # ------------------------ Example usage ----------------------------------
 if __name__ == '__main__':
@@ -462,3 +501,5 @@ if __name__ == '__main__':
     # ... then fine-tune MIL if bag labels available
 
     print('Skeleton ready. Fill dataset and hyperparams and run training.')
+
+

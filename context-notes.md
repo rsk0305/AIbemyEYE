@@ -1,4 +1,4 @@
-﻿# 프로젝트 파악 컨텍스트 노트
+# 프로젝트 파악 컨텍스트 노트
 
 ## 2026-06-23
 
@@ -69,3 +69,14 @@
 - 검증은 `python -m py_compile`, `node --check`, 런타임 JSON 직렬화 스모크, `/api/state`, `/api/threshold`, `/api/events`, `/api/sensor`, 정적 자산 응답, 입력 오류 400 처리, 운영자 제어 API로 수행했다.
 - 현재 로컬 서버는 `http://127.0.0.1:8765`에서 실행 중이며, 마지막 시작 PID는 `23084`이다.
 - 브라우저 플러그인 기반 시각 검증은 Node REPL 샌드박스 ACL 오류로 수행하지 못했다. 대신 HTTP 응답과 정적 JS 문법 검증으로 대체했다.
+
+## 2026-06-25 알고리즘 개선
+
+- 개선 범위는 데이터 파이프라인 버그, 의존성 누락, 점수 산출 투명성, 하드코딩 규칙 격리, 임계값 보정, 평가 요약 표준화로 제한한다.
+- 모델 아키텍처 전체 교체는 현재 실험 코드와 기존 평가 결과를 크게 흔들 수 있어 이번 변경에서는 새 대형 네트워크를 추가하지 않는다.
+- `save_stage1_data`를 실제 함수로 복구해 `scripts/stage1_generate_data.py`의 import 계약을 만족시켰다.
+- `AnomalyDetectorAgent`는 기존 `anomaly_score`를 유지하면서 `score_components`와 `threshold_info`를 반환하도록 바꿨다.
+- 107번 pressure와 112번 valve bit 규칙은 `correlation_rules` 설정으로 이동했다.
+- `evt_threshold`는 GPD 기반 계산을 시도하되 SciPy/NumPy 비호환이나 tail 부족 시 percentile fallback을 사용한다.
+- SWaT와 NASA 평가 결과에는 기존 flat metric key를 보존하면서 표준 `report` 블록을 추가한다.
+- 검증은 `py_compile`, `save_stage1_data` smoke test, `evt_threshold` smoke test, `AnomalyDetectorAgent` smoke test를 통과했다.
