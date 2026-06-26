@@ -132,6 +132,26 @@ class MidRateEncoder(nn.Module):
         h = self.pool(h).squeeze(-1)
         return h
 
+
+class TemporalTokenEncoder(nn.Module):
+    """Convolutional encoder that keeps a fixed number of temporal tokens."""
+    def __init__(self, in_ch: int, out_dim: int = 256, token_count: int = 8):
+        super().__init__()
+        self.token_count = token_count
+        self.conv = nn.Sequential(
+            nn.Conv1d(in_ch, out_dim, kernel_size=5, padding=2),
+            nn.ReLU(),
+            nn.Conv1d(out_dim, out_dim, kernel_size=3, padding=1),
+            nn.ReLU(),
+        )
+        self.pool = nn.AdaptiveAvgPool1d(token_count)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, T, C) -> (B, token_count, D)
+        x = x.permute(0, 2, 1)
+        h = self.pool(self.conv(x))
+        return h.permute(0, 2, 1)
+
 class LowRateEncoder(nn.Module):
     """For low-rate sensors or event-based inputs"""
     def __init__(self, in_dim: int, out_dim: int = 128):
@@ -257,6 +277,18 @@ class MultiModalAnomalyModel(nn.Module):
         self.mid_enc = MidRateEncoder(in_ch=config['mid_ch'], out_dim=config['enc_dim'])
         self.low_enc = LowRateEncoder(in_dim=config['low_dim'], out_dim=config['enc_dim'])
         self.bit_enc = BitFieldEncoder(bit_len=config['bit_len'], out_dim=config['enc_dim'])
+        self.time_tokens = int(config.get('time_tokens', 8))
+        self.high_token_enc = TemporalTokenEncoder(
+            in_ch=config['high_ch'],
+            out_dim=config['enc_dim'],
+            token_count=self.time_tokens,
+        )
+        self.mid_token_enc = TemporalTokenEncoder(
+            in_ch=config['mid_ch'],
+            out_dim=config['enc_dim'],
+            token_count=self.time_tokens,
+        )
+        self.token_type_emb = nn.Parameter(torch.zeros(4, config['enc_dim']))
 
         # optional graph fusion
         self.gnn = SimpleGNN(in_dim=config['enc_dim'], hidden=128, out_dim=config['enc_dim'])
@@ -280,13 +312,15 @@ class MultiModalAnomalyModel(nn.Module):
         z_low = self.low_enc(batch['low'])
         z_bits = self.bit_enc(batch['bits'])
 
-        # stack into (B, M, D)
-        # first unify dim by linear projections if needed
-        features = torch.stack([z_high, z_mid, z_low, z_bits], dim=1)  # (B, 4, D)
+        summary_features = torch.stack([z_high, z_mid, z_low, z_bits], dim=1)  # (B, 4, D)
 
-        # spatial fusion via GNN (if sensors as nodes - here simplified)
-        gnn_out = self.gnn(features)  # (B, 4, D)
+        high_tokens = self.high_token_enc(batch['high']) + self.token_type_emb[0].view(1, 1, -1)
+        mid_tokens = self.mid_token_enc(batch['mid']) + self.token_type_emb[1].view(1, 1, -1)
+        low_token = z_low.unsqueeze(1) + self.token_type_emb[2].view(1, 1, -1)
+        bit_token = z_bits.unsqueeze(1) + self.token_type_emb[3].view(1, 1, -1)
+        token_features = torch.cat([high_tokens, mid_tokens, low_token, bit_token], dim=1)
 
+        gnn_out = self.gnn(token_features, batch.get('adj'))  # (B, 2*time_tokens+2, D)
         fused = self.fusion(gnn_out)  # (B, D)
 
         proj = self.proj(fused)  # (B, proj_dim)
@@ -295,7 +329,7 @@ class MultiModalAnomalyModel(nn.Module):
         recon = self.decoder(fused)
         preds = self.cpc(fused)
 
-        bag_score, bag_repr = self.mil(features)  # (B,), (B,D)
+        bag_score, bag_repr = self.mil(gnn_out)  # (B,), (B,D)
 
         logits = self.classifier(fused).squeeze(-1)
 
@@ -305,10 +339,12 @@ class MultiModalAnomalyModel(nn.Module):
             'recon': recon,
             'cpc_preds': preds,
             'bag_score': bag_score,
+            'bag_repr': bag_repr,
             'logits': logits,
-            'inst_feats': features,
+            'inst_feats': gnn_out,
+            'tokens': token_features,
+            'sensor_feats': summary_features,
         }
-
 # ------------------------ Losses & Training Skeleton ----------------------
 import numpy as np
 

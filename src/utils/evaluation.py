@@ -2,17 +2,21 @@
 from typing import Any, Dict, Optional
 
 import numpy as np
-from sklearn.metrics import precision_recall_fscore_support
 
 
 def binary_detection_metrics(y_true, y_pred) -> Dict[str, float]:
     """Binary anomaly detection 지표를 동일한 이름으로 계산합니다."""
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        np.asarray(y_true),
-        np.asarray(y_pred),
-        average='binary',
-        zero_division=0,
-    )
+    yt = np.asarray(y_true).astype(int)
+    yp = np.asarray(y_pred).astype(int)
+    if yt.shape != yp.shape:
+        raise ValueError("y_true and y_pred must have the same shape")
+
+    tp = float(np.sum((yt == 1) & (yp == 1)))
+    fp = float(np.sum((yt == 0) & (yp == 1)))
+    fn = float(np.sum((yt == 1) & (yp == 0)))
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    f1 = 2.0 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
     return {
         'precision': float(precision),
         'recall': float(recall),

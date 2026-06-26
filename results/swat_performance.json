@@ -1,0 +1,29 @@
+{
+  "pt_precision": 0.10037174721189591,
+  "pt_recall": 0.4909090909090909,
+  "pt_f1": 0.16666666666666666,
+  "pa_precision": 0.18518518518518517,
+  "pa_recall": 1.0,
+  "pa_f1": 0.3125,
+  "report": {
+    "schema_version": 1,
+    "dataset": "SWaT",
+    "metrics": {
+      "point_level": {
+        "precision": 0.10037174721189591,
+        "recall": 0.4909090909090909,
+        "f1": 0.16666666666666666
+      },
+      "point_adjusted": {
+        "precision": 0.18518518518518517,
+        "recall": 1.0,
+        "f1": 0.3125
+      }
+    },
+    "extra": {
+      "train_window_stride": 3000,
+      "test_window_stride": 500,
+      "evaluated_windows": 2884
+    }
+  }
+}

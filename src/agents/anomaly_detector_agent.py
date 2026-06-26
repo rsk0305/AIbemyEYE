@@ -108,7 +108,8 @@ class AnomalyDetectorAgent(BaseAgent):
             'recon_dim': 64,
             'pred_steps': 1,
             'tau': 0.07,
-            'lambda_cpc': 1.0
+            'lambda_cpc': 1.0,
+            'time_tokens': 4
         }
         # 외부 설정이 있을 경우 덮어쓰기
         if "model_config" in self.config:

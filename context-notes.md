@@ -80,3 +80,27 @@
 - `evt_threshold`는 GPD 기반 계산을 시도하되 SciPy/NumPy 비호환이나 tail 부족 시 percentile fallback을 사용한다.
 - SWaT와 NASA 평가 결과에는 기존 flat metric key를 보존하면서 표준 `report` 블록을 추가한다.
 - 검증은 `py_compile`, `save_stage1_data` smoke test, `evt_threshold` smoke test, `AnomalyDetectorAgent` smoke test를 통과했다.
+
+## 2026-06-26 벤치마크 교정 결과 확인
+
+- 기존 `results/swat_performance.json`과 `results/nasa_performance.json`에는 새 `report.schema_version` 블록이 없어 개선 전 결과로 판단했다.
+- 개선된 평가 스크립트 기준으로 SWaT와 NASA를 재실행해 결과를 확인한다.
+- 벤치마크 재실행 중 현재 환경의 NumPy 2.4.6과 SciPy/sklearn ABI 비호환으로 `sklearn.metrics` import가 실패했다.
+- `src.utils.evaluation.binary_detection_metrics`를 순수 NumPy 구현으로 바꿔 평가 지표 계산에서 sklearn/scipy 의존을 제거했다.
+- 현재 환경의 pandas/pyarrow도 NumPy 2.4.6과 ABI 비호환으로 import에 실패했다.
+- `swat_loader.py`와 `nasa_loader.py`에서 pandas 의존을 제거하고 표준 `csv`와 NumPy 기반 로딩으로 변경했다.
+
+## 2026-06-26 벤치마크 교정 실행 완료
+
+- SWaT 평가는 전체 CSV 숫자 파싱 대신 학습 stride 3000, 테스트 stride 500의 창 샘플링 로더로 교정했다. 새 결과는 Pt-F1 0.1667, PA-F1 0.3125이며 `results/swat_performance.json`에 `report.schema_version` 1과 `evaluated_windows` 2884를 기록했다.
+- NASA 평가는 채널 `A-1`, `D-1`, `M-1`에 대해 빠른 교정 설정을 적용했다. 기본 설정은 train epoch 1, 최대 train batch 3, baseline fit batch 10, eval step 10이며 평균 Pt-F1 0.3405, 평균 PA-F1 0.5442를 기록했다.
+- 현재 PC에서는 CUDA가 없고 `torch.cuda.is_available()` 경로가 멈출 수 있어 장치 선택을 `src/utils/device.py`로 분리했다. 기본 `auto`는 별도 Python 프로세스에서 제한 시간 안에 CUDA를 감지하고 실패하면 CPU로 떨어지며, GPU 장비에서는 `A_EYE_DEVICE=cuda`로 명시해 CUDA를 사용할 수 있다.
+- NumPy 2.4.6 환경에서 SciPy/sklearn과 pandas/pyarrow ABI가 맞지 않아 평가 유틸과 SWaT/NASA 로더의 외부 의존성을 표준 라이브러리 `csv`와 NumPy 중심으로 줄였다.
+
+## 2026-06-26 5번 시간 토큰 모델 구조 개선
+
+- 기존 `MultiModalAnomalyModel`은 high, mid, low, bits를 각각 단일 벡터로 압축한 뒤 4개 modality 토큰만 fusion했다. 이 구조는 센서별 시간 패턴을 fusion 단계에서 직접 볼 수 없는 한계가 있었다.
+- `TemporalTokenEncoder`를 추가해 high와 mid 입력을 각각 고정 개수 시간 토큰으로 보존했다. low와 bits는 센서 상태 토큰 1개씩으로 합쳐 총 `2 * time_tokens + 2`개의 토큰을 GNN과 Transformer에 전달한다.
+- 기존 출력 키인 `fused`, `proj`, `recon`, `cpc_preds`, `bag_score`, `logits`, `inst_feats`는 유지했다. 새로 `tokens`, `sensor_feats`, `bag_repr`를 반환해 후속 분석과 국소화 개선에 사용할 수 있게 했다.
+- 벤치마크와 운영 에이전트 기본값은 비용을 통제하기 위해 `time_tokens` 4로 두었다. 벤치마크 스크립트는 `A_EYE_TIME_TOKENS`로 값을 조정할 수 있다.
+- 검증은 `py_compile`, 모델 forward shape 스모크 테스트, `AnomalyDetectorAgent.process` 스모크 테스트, NASA 한 채널 제한 평가 스모크 테스트로 수행했다.

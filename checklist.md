@@ -47,3 +47,17 @@
 - [x] 평가 결과 요약 형식 표준화.
 - [x] 문법 검증과 최소 실행 검증.
 
+
+# 벤치마크 교정 결과 체크리스트
+
+- [x] 기존 SWaT/NASA 결과가 개선 전 스키마임을 확인.
+- [x] SWaT 평가 재실행. Pt-F1 0.1667, PA-F1 0.3125.
+- [x] NASA 평가 재실행. 평균 Pt-F1 0.3405, 평균 PA-F1 0.5442.
+- [x] 새 결과와 기존 결과 비교. 새 결과는 `report.schema_version` 1과 샘플링 조건을 포함한다.
+
+# 5번 시간 토큰 모델 구조 개선 체크리스트
+
+- [x] 기존 `MultiModalAnomalyModel`의 modality 벡터 fusion 구조 확인.
+- [x] high/mid 시간 토큰 인코더 추가.
+- [x] low/bits 센서 상태 토큰과 함께 fusion하도록 forward 갱신.
+- [x] 기존 출력 키 호환성과 스모크 테스트 검증.

@@ -1,0 +1,115 @@
+{
+  "channels": {
+    "A-1": {
+      "pt_precision": 0.1111111111111111,
+      "pt_recall": 0.125,
+      "pt_f1": 0.11764705882352941,
+      "pa_precision": 0.5,
+      "pa_recall": 1.0,
+      "pa_f1": 0.6666666666666666,
+      "report": {
+        "schema_version": 1,
+        "dataset": "NASA SMAP/MSL",
+        "metrics": {
+          "point_level": {
+            "precision": 0.1111111111111111,
+            "recall": 0.125,
+            "f1": 0.11764705882352941
+          },
+          "point_adjusted": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.6666666666666666
+          }
+        },
+        "extra": {
+          "channel": "A-1",
+          "train_epochs": 1,
+          "max_train_batches": 3,
+          "fit_batches": 10,
+          "eval_step": 10,
+          "evaluated_windows": 855
+        }
+      }
+    },
+    "D-1": {
+      "pt_precision": 0.9258064516129032,
+      "pt_recall": 0.8830769230769231,
+      "pt_f1": 0.9039370078740158,
+      "pa_precision": 0.9339080459770115,
+      "pa_recall": 1.0,
+      "pa_f1": 0.9658246656760773,
+      "report": {
+        "schema_version": 1,
+        "dataset": "NASA SMAP/MSL",
+        "metrics": {
+          "point_level": {
+            "precision": 0.9258064516129032,
+            "recall": 0.8830769230769231,
+            "f1": 0.9039370078740158
+          },
+          "point_adjusted": {
+            "precision": 0.9339080459770115,
+            "recall": 1.0,
+            "f1": 0.9658246656760773
+          }
+        },
+        "extra": {
+          "channel": "D-1",
+          "train_epochs": 1,
+          "max_train_batches": 3,
+          "fit_batches": 10,
+          "eval_step": 10,
+          "evaluated_windows": 841
+        }
+      }
+    },
+    "M-1": {
+      "pt_precision": 0.0,
+      "pt_recall": 0.0,
+      "pt_f1": 0.0,
+      "pa_precision": 0.0,
+      "pa_recall": 0.0,
+      "pa_f1": 0.0,
+      "report": {
+        "schema_version": 1,
+        "dataset": "NASA SMAP/MSL",
+        "metrics": {
+          "point_level": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "extra": {
+          "channel": "M-1",
+          "train_epochs": 1,
+          "max_train_batches": 3,
+          "fit_batches": 10,
+          "eval_step": 10,
+          "evaluated_windows": 218
+        }
+      }
+    }
+  },
+  "average_point_f1": 0.34052802223251505,
+  "average_pa_f1": 0.5441637774475813,
+  "report": {
+    "schema_version": 1,
+    "dataset": "NASA SMAP/MSL",
+    "metrics": {
+      "average_point_f1": 0.34052802223251505,
+      "average_point_adjusted_f1": 0.5441637774475813
+    },
+    "channels": [
+      "A-1",
+      "D-1",
+      "M-1"
+    ]
+  }
+}
