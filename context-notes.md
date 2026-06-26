@@ -104,3 +104,16 @@
 - 기존 출력 키인 `fused`, `proj`, `recon`, `cpc_preds`, `bag_score`, `logits`, `inst_feats`는 유지했다. 새로 `tokens`, `sensor_feats`, `bag_repr`를 반환해 후속 분석과 국소화 개선에 사용할 수 있게 했다.
 - 벤치마크와 운영 에이전트 기본값은 비용을 통제하기 위해 `time_tokens` 4로 두었다. 벤치마크 스크립트는 `A_EYE_TIME_TOKENS`로 값을 조정할 수 있다.
 - 검증은 `py_compile`, 모델 forward shape 스모크 테스트, `AnomalyDetectorAgent.process` 스모크 테스트, NASA 한 채널 제한 평가 스모크 테스트로 수행했다.
+
+## 2026-06-26 5번 반영 후 재벤치마크 시작
+
+- 사용자가 전체 재실행을 시작하라고 요청했다.
+- 목적은 시간 토큰 모델 구조가 반영된 현재 코드 기준으로 SWaT와 NASA 결과가 직전 교정 결과 대비 어떻게 변하는지 확인하는 것이다.
+- 기준값은 직전 교정 결과인 SWaT Pt-F1 0.1667, PA-F1 0.3125와 NASA 평균 Pt-F1 0.3405, 평균 PA-F1 0.5442로 둔다.
+
+## 2026-06-26 5번 반영 후 재벤치마크 결과
+
+- SWaT 재실행은 CPU에서 421.3초가 걸렸다. 결과는 Pt-F1 0.1667, PA-F1 0.3125로 직전 교정 결과와 동일했다.
+- NASA 3채널 재실행은 CPU에서 31.6초가 걸렸다. 평균 Pt-F1은 0.3405에서 0.3753으로 0.0347 상승했고, 평균 PA-F1은 0.5442에서 0.7991로 0.2549 상승했다.
+- NASA 개선은 주로 M-1 채널이 Pt-F1 0.0000, PA-F1 0.0000에서 Pt-F1 0.1036, PA-F1 0.7677로 회복된 영향이다. D-1은 Pt-F1이 0.9039에서 0.9045로 소폭 상승했고 PA-F1은 0.9658에서 0.9630으로 소폭 하락했다. A-1은 동일했다.
+- 실행 조건은 기본 `A_EYE_DEVICE=auto`에서 CPU로 선택됐고, `A_EYE_TIME_TOKENS` 기본값 4, NASA train epoch 1, 최대 train batch 3, fit batch 10, eval step 10이다.
