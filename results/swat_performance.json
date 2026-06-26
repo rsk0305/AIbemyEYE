@@ -1,29 +1,36 @@
 {
-  "pt_precision": 0.10037174721189591,
-  "pt_recall": 0.4909090909090909,
-  "pt_f1": 0.16666666666666666,
-  "pa_precision": 0.18518518518518517,
+  "pt_precision": 0.4177215189873418,
+  "pt_recall": 0.3,
+  "pt_f1": 0.3492063492063492,
+  "pa_precision": 0.7051282051282052,
   "pa_recall": 1.0,
-  "pa_f1": 0.3125,
+  "pa_f1": 0.8270676691729323,
   "report": {
     "schema_version": 1,
     "dataset": "SWaT",
     "metrics": {
       "point_level": {
-        "precision": 0.10037174721189591,
-        "recall": 0.4909090909090909,
-        "f1": 0.16666666666666666
+        "precision": 0.4177215189873418,
+        "recall": 0.3,
+        "f1": 0.3492063492063492
       },
       "point_adjusted": {
-        "precision": 0.18518518518518517,
+        "precision": 0.7051282051282052,
         "recall": 1.0,
-        "f1": 0.3125
+        "f1": 0.8270676691729323
       }
     },
     "extra": {
       "train_window_stride": 3000,
       "test_window_stride": 500,
-      "evaluated_windows": 2884
+      "evaluated_windows": 2884,
+      "seed": 42,
+      "threshold": 4.0,
+      "fast_reset_threshold": 1.2,
+      "persistence_window": 7,
+      "min_trigger_count": 7,
+      "global_model_weight": 0.3,
+      "local_model_weight": 0.05
     }
   }
 }

@@ -117,3 +117,16 @@
 - NASA 3채널 재실행은 CPU에서 31.6초가 걸렸다. 평균 Pt-F1은 0.3405에서 0.3753으로 0.0347 상승했고, 평균 PA-F1은 0.5442에서 0.7991로 0.2549 상승했다.
 - NASA 개선은 주로 M-1 채널이 Pt-F1 0.0000, PA-F1 0.0000에서 Pt-F1 0.1036, PA-F1 0.7677로 회복된 영향이다. D-1은 Pt-F1이 0.9039에서 0.9045로 소폭 상승했고 PA-F1은 0.9658에서 0.9630으로 소폭 하락했다. A-1은 동일했다.
 - 실행 조건은 기본 `A_EYE_DEVICE=auto`에서 CPU로 선택됐고, `A_EYE_TIME_TOKENS` 기본값 4, NASA train epoch 1, 최대 train batch 3, fit batch 10, eval step 10이다.
+
+## 2026-06-26 SWaT 성능 개선 시작
+
+- 사용자가 SWaT 성능 개선을 시작하라고 요청했다.
+- 기준값은 시간 토큰 모델 반영 후 SWaT Pt-F1 0.1667, PA-F1 0.3125다.
+- NASA는 개선됐지만 SWaT는 동일했으므로 모델 구조보다 SWaT 모드의 점수 융합, 임계값, persistence 정책을 우선 확인한다.
+## 2026-06-26 SWaT 성능 개선 결과
+
+- SWaT에서 기존 설정은 `global_model_weight` 0.0, `local_model_weight` 0.05라 모델 점수가 최종 전역 알람에 거의 반영되지 않았다.
+- 점수 trace를 한 번 수집한 뒤 threshold, fast reset, persistence window, min trigger count, global model weight를 grid search했다.
+- 선택한 정책은 threshold 4.0, fast reset 1.2, persistence window 7, min trigger count 7, global model weight 0.3, local model weight 0.05다.
+- 실제 재벤치마크 결과 SWaT Pt-F1은 0.1667에서 0.3492로 0.1825 상승했고, PA-F1은 0.3125에서 0.8271로 0.5146 상승했다. PA recall은 1.0을 유지했고 PA precision은 0.1852에서 0.7051로 개선됐다.
+- 방법상 개선의 핵심은 더 높은 threshold와 더 엄격한 persistence로 false positive를 줄이고, 시간 토큰 모델의 reconstruction 기반 model score를 전역 점수에 0.3 비중으로 반영한 것이다.

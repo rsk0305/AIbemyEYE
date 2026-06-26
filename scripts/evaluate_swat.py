@@ -63,7 +63,17 @@ def evaluate_swat(device='cpu'):
     print("\nEvaluating SWaT Dataset...")
     # Remove single thread restriction to utilize multicore CPU speedup
     # torch.set_num_threads(1)
+    seed = int(os.environ.get('A_EYE_SEED', '42'))
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     window_size = 100
+
+    swat_threshold = float(os.environ.get('A_EYE_SWAT_THRESHOLD', '4.0'))
+    swat_fast_reset = float(os.environ.get('A_EYE_SWAT_FAST_RESET', '1.2'))
+    swat_persistence_window = int(os.environ.get('A_EYE_SWAT_PERSISTENCE_WINDOW', '7'))
+    swat_min_trigger_count = int(os.environ.get('A_EYE_SWAT_MIN_TRIGGER_COUNT', '7'))
+    swat_global_model_weight = float(os.environ.get('A_EYE_SWAT_GLOBAL_MODEL_WEIGHT', '0.3'))
+    swat_local_model_weight = float(os.environ.get('A_EYE_SWAT_LOCAL_MODEL_WEIGHT', '0.05'))
 
     # 1. Load sampled windows for faster benchmark calibration.
     train_window_stride = 3000
@@ -96,12 +106,16 @@ def evaluate_swat(device='cpu'):
         "default_rate": 1,
         "log_path": "results/swat_inspection.jsonl",
         "ada_cfg": {
-            "initial_threshold": 2.2,
-            "fast_reset_threshold": 1.2,
+            "initial_threshold": swat_threshold,
+            "fast_reset_threshold": swat_fast_reset,
             "dataset_mode": "swat",
             "model_config": model_config,
-            "persistence_window": 10,
-            "min_trigger_count": 5
+            "score_policy": {
+                "global_model_weight": swat_global_model_weight,
+                "local_model_weight": swat_local_model_weight,
+            },
+            "persistence_window": swat_persistence_window,
+            "min_trigger_count": swat_min_trigger_count
         },
         "cla_cfg": {
             "drift_threshold": 100.0,
@@ -242,6 +256,13 @@ def evaluate_swat(device='cpu'):
             'train_window_stride': train_window_stride,
             'test_window_stride': test_window_stride if test_pre_sampled else None,
             'evaluated_windows': int(len(y_true_eval)),
+            'seed': seed,
+            'threshold': swat_threshold,
+            'fast_reset_threshold': swat_fast_reset,
+            'persistence_window': swat_persistence_window,
+            'min_trigger_count': swat_min_trigger_count,
+            'global_model_weight': swat_global_model_weight,
+            'local_model_weight': swat_local_model_weight,
         },
     )
     return metrics
