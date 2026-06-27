@@ -130,3 +130,11 @@
 - 선택한 정책은 threshold 4.0, fast reset 1.2, persistence window 7, min trigger count 7, global model weight 0.3, local model weight 0.05다.
 - 실제 재벤치마크 결과 SWaT Pt-F1은 0.1667에서 0.3492로 0.1825 상승했고, PA-F1은 0.3125에서 0.8271로 0.5146 상승했다. PA recall은 1.0을 유지했고 PA precision은 0.1852에서 0.7051로 개선됐다.
 - 방법상 개선의 핵심은 더 높은 threshold와 더 엄격한 persistence로 false positive를 줄이고, 시간 토큰 모델의 reconstruction 기반 model score를 전역 점수에 0.3 비중으로 반영한 것이다.
+
+## 2026-06-27 SWaT 기본 정책 승격 및 seed 검증
+
+- `scripts/evaluate_swat.py`에만 있던 SWaT 튜닝 정책을 `AnomalyDetectorAgent`의 `dataset_mode='swat'` 기본값으로 승격했다. 평가 스크립트 외 운영 경로에서도 threshold 4.0, fast reset 1.2, global model weight 0.3, local model weight 0.05, min trigger count 7이 기본 적용된다.
+- `AnomalyDetectorAgent` 기본값 스모크 테스트에서 SWaT는 튜닝값으로 초기화되고 NASA는 기존 threshold 3.0, fast reset 1.5, model weight 0.5, min trigger count 5를 유지함을 확인했다.
+- SWaT 추가 seed 검증은 seed 7과 123을 전체 재벤치마크로 수행했다. 기존 seed 42와 동일하게 Pt-F1 0.3492, PA-F1 0.8271이 나와 이번 SWaT 정책은 확인한 seed 범위에서는 안정적이다.
+- seed 7 검증 중 콘솔 출력 경로에서 `OSError: [Errno 22] Invalid argument`가 발생했지만 결과 JSON은 저장됐다. 이후 seed 123은 stdout을 로그 파일로 redirect해 정상 완료했다.
+- NASA 회귀 확인은 공식 결과 파일을 덮어쓰지 않고 scratch에 저장했다. seed를 고정하면 NASA 평균 Pt-F1 0.3405, PA-F1 0.5442가 나와 NASA의 이전 0.7991 PA-F1 결과는 학습 seed에 민감할 수 있음을 확인했다. NASA seed 고정과 안정화는 별도 후속 작업으로 분리한다.

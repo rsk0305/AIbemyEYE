@@ -78,3 +78,12 @@
 - [x] 최소 범위 코드 변경.
 - [x] 문법과 스모크 테스트 검증.
 - [x] SWaT 재벤치마크와 결과 비교. Pt-F1 0.3492, PA-F1 0.8271로 개선됐다.
+
+# SWaT 기본 정책 승격 체크리스트
+
+- [x] `AnomalyDetectorAgent`의 SWaT 기본 정책 초기화 구조 확인.
+- [x] SWaT 기본 threshold 4.0, fast reset 1.2, global model weight 0.3 반영.
+- [x] SWaT 기본 min trigger count 7 반영.
+- [x] Python 문법 검증과 SWaT/NASA 기본값 스모크 테스트 수행.
+- [x] SWaT seed 7, 42, 123 검증. 세 seed 모두 Pt-F1 0.3492, PA-F1 0.8271.
+- [x] NASA 3채널 회귀 확인을 scratch에 별도 저장.

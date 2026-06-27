@@ -20,19 +20,24 @@ class AnomalyDetectorAgent(BaseAgent):
         super().__init__(name, config, device)
         self.reference_rate = config.get("reference_rate", 200) # Hz
         self.window_sec = config.get("window_sec", 1.0)
-        self.threshold = config.get("initial_threshold", 3.0) # 기본 임계치
-        self.fast_reset_threshold = config.get("fast_reset_threshold", 1.5) # Fast-Reset 임계치
         self.dataset_mode = config.get("dataset_mode", "sim") # 'sim', 'nasa', 'swat'
+        swat_mode = self.dataset_mode == 'swat'
+        default_threshold = 4.0 if swat_mode else 3.0
+        default_fast_reset = 1.2 if swat_mode else 1.5
+        default_global_model_weight = 0.3 if swat_mode else 0.5
+        default_local_model_weight = 0.05 if swat_mode else 0.5
+        self.threshold = config.get("initial_threshold", default_threshold) # 기본 임계치
+        self.fast_reset_threshold = config.get("fast_reset_threshold", default_fast_reset) # Fast-Reset 임계치
         self.score_policy = config.get("score_policy", {})
-        self.global_model_weight = float(self.score_policy.get("global_model_weight", 0.0 if self.dataset_mode == 'swat' else 0.5))
-        self.local_model_weight = float(self.score_policy.get("local_model_weight", 0.05 if self.dataset_mode == 'swat' else 0.5))
+        self.global_model_weight = float(self.score_policy.get("global_model_weight", default_global_model_weight))
+        self.local_model_weight = float(self.score_policy.get("local_model_weight", default_local_model_weight))
         self.warmup_limit = int(config.get("warmup_limit", 80 if self.dataset_mode == 'swat' else 15))
         self.warmup_fit_start = int(config.get("warmup_fit_start", 50 if self.dataset_mode == 'swat' else 10))
         self.baseline_ema_alpha = float(config.get("baseline_ema_alpha", 0.4 if self.dataset_mode == 'swat' else 0.05))
         self.correlation_rules = config.get("correlation_rules", self._default_correlation_rules())
         self.score_history = []
         self.persistence_window = config.get("persistence_window", 7) # 최근 7초 이력
-        self.min_trigger_count = config.get("min_trigger_count", 5) # 5번 초과 시 최종 알람
+        self.min_trigger_count = config.get("min_trigger_count", 7 if swat_mode else 5) # 기준 횟수 초과 시 최종 알람
         self.model = None
         self.model_ready = False  # 모델이 1회 이상 학습되기 전까지 앙상블에서 제외
         self._init_model()
