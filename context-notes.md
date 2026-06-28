@@ -160,3 +160,16 @@
 - Enc-Dec, VAE, LSTM 기반 이상탐지, 우주기 데이터 이상탐지, 다변량 시계열 이상탐지, KIMST 점검 관련 딥러닝 논문을 포함했다.
 - Word COM 렌더링 기준으로 PDF가 A4 4쪽이며, `pdftotext` 기준 제목, Abstract, Key Words, 본문, Fig. 1, Table 1~3, 후기, Reference가 추출됨을 확인했다.
 - 이미지 보기 도구는 ACL 문제로 열람하지 못했으나, Word PDF 생성, Poppler PNG 변환, 페이지별 픽셀 밀도와 경계 박스 검수로 대체 확인했다.
+
+## 2026-06-28 관련 논문 서치 및 검토
+
+- 목표는 기존 KIMST 논문 초안의 Reference와 선행연구 검토를 보강하는 것이다.
+- 검색 범위는 Enc-Dec 기반 시계열 이상탐지, VAE/LSTM/Transformer 기반 다변량 이상탐지, NASA·우주기 텔레메트리 이상탐지, 항공·국방 점검 사례, KIMST 학회지 관련 논문으로 둔다.
+- 검토 기준은 방법론 직접 관련성, 데이터 형태 유사성, 국방·항공우주 적용성, 초안 반영 위치, Reference 채택 우선순위이다.
+
+### 관련 논문 검토 결과
+
+- `paper_work/related_paper_review.md`에 관련 논문 검토표를 작성했다.
+- 최우선 보강 후보는 Malhotra et al.의 LSTM Enc-Dec 논문, Hundman et al.의 NASA 우주기 텔레메트리 이상탐지 논문, KIMST의 미사일 FCS DAS 실시간 이상탐지 논문이다.
+- 국내 국방 데이터 배경 보강에는 KIMST의 무기체계 PHM/GAN 논문과 창정비 시험결과 DB 분석 논문이 적합하다.
+- Anomaly Transformer와 TranAD는 최신 고도화 후보로는 좋지만, 현재 초안의 단순 구조 방향과는 거리가 있어 고찰에서 확장 후보로만 다루는 것이 적절하다.
