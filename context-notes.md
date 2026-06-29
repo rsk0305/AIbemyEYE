@@ -216,3 +216,15 @@
 - 보안성 문구와 후기성 문구는 투고용 본문에서 과도하게 보이지 않도록 축소하거나 삭제한다.
 
 - v2 DOCX는 Word COM 열기 및 통계 계산 기준 4쪽, 표 4개로 정상 확인되었다. 패키지 렌더러는 pdf2image 모듈 부재로 실패했고, Word PDF 내보내기는 원본과 v2 모두 PDF 저장 단계에서 타임아웃되어 PNG 시각 QA는 완료하지 못했다.
+
+## 2026-06-29 DOCX v3 수정 계획
+- v2를 보존하고 `kimst_encdec_guided_weapon_data_inspection_v3.docx`를 새로 생성한다.
+- 제안 구조는 `B x D x W` 입력, LSTM Encoder, latent state `Z_t`, LSTM Decoder, Linear and ReLU output head, MSE reconstruction loss로 구체화한다.
+- 모델 설명에는 LSTM Autoencoder와 VAE를 함께 반영하고, OmniAnomaly 계열의 확률적 잠재표현과 Bahdanau Attention을 적용한 구조로 표현한다.
+- 실험 설명은 항공기 연동 정상 데이터만으로 VAE를 학습한 뒤 Hardware Fail, 전달정렬 비정상, 항법 비정상 등 비정상 입력에서 복원 오차 증가와 threshold 기반 탐지 가능성을 확인한 것으로 정리한다.
+- Future Work는 비지도 탐지 뼈대를 유지하면서 일부 라벨을 지도학습으로 통합하는 반지도 또는 혼합학습 프레임워크로 확장한다고 쓴다.
+
+- v3 DOCX는 LSTM Autoencoder, VAE, OmniAnomaly 계열 잠재표현, Bahdanau Attention, B x D x W 입력, LSTM Encoder -> Z_t -> LSTM Decoder -> Linear-ReLU 구조를 반영했다.
+- 실험 서술은 항공기 연동 정상 데이터만으로 VAE를 학습하고 Hardware Fail, 전달정렬 비정상, 항법 비정상 등 비정상 입력에서 MSE threshold 기반 anomaly candidate 선별 가능성을 확인한 흐름으로 수정했다.
+- Future Work는 비지도 학습 기반 detection 뼈대에 일부 지도 라벨을 통합하는 비지도-지도 통합 프레임워크 개발로 정리했다.
+- v3 DOCX는 Word COM 열기 기준 5쪽, 표 4개로 정상 확인되었다. 패키지 렌더러는 pdf2image 모듈 부재로 실패해 PNG 시각 QA는 완료하지 못했다.

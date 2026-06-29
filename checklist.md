@@ -138,3 +138,12 @@
 - [x] 새 DOCX Word 열기 및 구조 검증
 - [ ] PNG 렌더링 및 시각 QA
 - [x] 변경사항 커밋
+
+## 2026-06-29 DOCX v3 모델 구조 반영
+- [x] v2 DOCX 구조와 수정 위치 확인
+- [x] LSTM Autoencoder, VAE, OmniAnomaly, Bahdanau Attention 구조 반영
+- [x] 항공기 연동 정상 데이터 기반 비지도 학습 실험 내용 반영
+- [x] 비정상 입력 유형과 MSE threshold 판정 설명 보강
+- [x] Future Work에 비지도-지도 통합 프레임워크 반영
+- [x] DOCX Word 열기 및 구조 검증
+- [x] 변경사항 커밋
