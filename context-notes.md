@@ -290,3 +290,35 @@
 - 공유 2차원 인접행렬의 배치 처리에서 불필요한 차원이 추가되던 오류를 회귀 테스트로 재현하고 `einsum` 기반 명시적 배치 연산으로 수정했다.
 - 전체 단위 테스트 16개와 변경 Python 파일의 `py_compile` 검증이 통과했으며, 변경 파일 13개의 UTF-8 strict read와 손상 sentinel 검사에서 문제가 없었다.
 
+## 2026-08-28 벤치마크 프로토콜 v2 전체 실행 계획
+
+- 사용자가 모든 확인과 실행을 요청했으므로 교정 코드 기준 SWaT와 NASA 벤치마크를 실제로 재실행한다.
+- 실행 전 기존 결과 지표를 기록하고, 결과 파일은 각 평가 스크립트의 표준 경로에 갱신한다.
+- SWaT는 stride 3000 학습 창과 stride 500 테스트 창을 사용하는 전체 축소 벤치마크를 실행한다.
+- NASA는 A-1, D-1, M-1 세 채널을 seed 42, train epoch 1, 최대 train batch 3, baseline fit batch 10, eval step 10으로 실행한다.
+- 새 neural 지표는 희소 샘플에서 stateless threshold를 사용하며, robust MAD 기준선은 train 적합, calibration 임계값 고정, test 일회 평가를 따른다.
+- 전체 원시 시계열 전수 neural 추론은 현재 프로토콜 범위가 아니며, 결과에는 평가 grain과 sample stride를 명시한다.
+- 실행 전 기준 파일은 SWaT Point F1 0.349206, PA-F1 0.827068과 NASA 평균 Point F1 0.375271, PA-F1 0.799102를 담고 있다.
+- 실행 환경은 Python 3.12.7, PyTorch 2.12.0+cpu, CPU 4코어 및 torch 4스레드이며 장치 선택 결과는 CPU다.
+- SWaT 실행은 2026-08-28 23:12에 시작해 2026-08-29 00:52에 결과 파일을 저장했으며 약 100분이 걸렸다. 사전학습은 415.57초였다.
+- 교정 SWaT 결과는 Point precision 0.061331, recall 0.536364, F1 0.110075와 PA-F1 0.195904다.
+- 희소 샘플의 잘못된 persistence 누적을 제거하면서 기존 Point F1 0.349206과 PA-F1 0.827068보다 낮아졌다. 기존 수치는 교정 프로토콜과 직접 비교 가능한 성능이 아니다.
+- SWaT event F1은 0.004405이며 실제 이벤트 1개, 예측 이벤트 453개, 오경보 이벤트 452개다. stride 500 라벨에서 실제 공격 구간이 1개로 축약되어 표준 이벤트 성능으로 해석할 수 없다.
+- SWaT robust MAD 기준선은 Point F1과 Event F1이 모두 0이며 threshold 19704.110129, false positive 325, false negative 110이다.
+- NASA 3채널 실행은 SWaT 종료 직후 시작해 2026-08-29 02:30에 결과 파일을 저장했으며 약 98분이 걸렸다.
+- NASA 평균 Point F1은 0.378091, 평균 PA-F1은 0.551003, robust MAD 평균 Point F1은 0.288915, 평균 Event F1은 0.272840이다.
+- A-1은 Point F1 0.222222, PA-F1 0.666667, Event F1 1.0이며 855개 창을 평가했다.
+- D-1은 Point F1 0.912052, PA-F1 0.986343, Event F1 0.4이며 841개 창을 평가했다.
+- M-1은 Point F1과 PA-F1 및 Event F1이 모두 0이며 218개 창을 평가했다.
+- 세 채널 모두 seed 42와 stateless threshold 경보 방식을 결과 JSON에 기록했다.
+- 결과 자동 검증에서 평균 재계산, robust MAD 혼동행렬 행 수, 이벤트 false alarm 수식, seed 42, stateless threshold 및 평가 창 수가 모두 일치했다.
+- SWaT는 기존 대비 Point F1이 0.239132, PA-F1이 0.631164 하락했다. 기존 persistence 정책은 stride 500의 불연속 창을 연속 시점처럼 누적했으므로 새 결과가 더 보수적인 교정값이다.
+- NASA 평균 Point F1은 기존 대비 0.002821 상승해 사실상 동일하고, 평균 PA-F1은 0.248099 하락했다.
+- NASA 채널별 Point F1 변화는 A-1 +0.104575, D-1 +0.007514, M-1 -0.103627이다. M-1 실패가 평균 개선을 상쇄했다.
+- reconstruction loss 감소는 decoder 학습 경로가 작동함을 보여주지만 최종 경보 성능 개선을 보장하지 않는다. 현재 병목은 점수 임계값과 센서 및 공정 상태별 calibration이다.
+- SWaT threshold 4.0은 과거 persistence 정책과 함께 선택된 설정이므로 stateless sparse 평가에 그대로 사용하는 것은 적절하지 않다. 정상 calibration 구간에서 목표 false alarm rate로 새 임계값을 고정해야 한다.
+- SWaT stride 500 라벨은 공식 공격 이벤트 구조를 보존하지 못하므로 현재 Event F1은 내부 회귀 지표로만 사용해야 한다. 운영 persistence 평가는 연속 창 또는 실제 timestamp 간격을 보존한 데이터에서 별도로 수행해야 한다.
+- NASA D-1 robust MAD Point F1은 0.812283으로 neural 0.912052에 근접하지만 A-1과 M-1 기준선은 낮다. 모델 이점은 채널별로 검증해야 한다.
+- 약 100분 SWaT와 약 98분 NASA 실행 시간은 반복 calibration에 과도하다. 다음 구현 우선순위는 모델 점수 배치 계산, 점수 및 라벨 캐시, 임계값 sweep과 추론 분리다.
+- 전체 단위 테스트 16개, 관련 Python 파일 py_compile, 두 결과 JSON 산술 불변식, 변경 파일 4개의 UTF-8 strict read와 손상 sentinel 검사가 모두 통과했다.
+

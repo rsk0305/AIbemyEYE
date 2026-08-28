@@ -1,28 +1,69 @@
 {
-  "pt_precision": 0.4177215189873418,
-  "pt_recall": 0.3,
-  "pt_f1": 0.3492063492063492,
-  "pa_precision": 0.7051282051282052,
+  "pt_precision": 0.061330561330561334,
+  "pt_recall": 0.5363636363636364,
+  "pt_f1": 0.11007462686567165,
+  "pa_precision": 0.10858835143139191,
   "pa_recall": 1.0,
-  "pa_f1": 0.8270676691729323,
+  "pa_f1": 0.19590382902938558,
+  "event": {
+    "precision": 0.002207505518763797,
+    "recall": 1.0,
+    "f1": 0.004405286343612334,
+    "true_events": 1,
+    "predicted_events": 453,
+    "matched_events": 1,
+    "false_alarm_events": 452,
+    "average_latency": 0.0
+  },
+  "baseline_robust_mad": {
+    "baseline": "robust_mad",
+    "quantile": 0.995,
+    "fit_rows": 324,
+    "calibration_rows": 92,
+    "evaluation_rows": 2884,
+    "threshold": 19704.1101286794,
+    "point": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "true_positive": 0,
+      "false_positive": 325,
+      "false_negative": 110,
+      "true_negative": 2449
+    },
+    "event": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "true_events": 1,
+      "predicted_events": 2,
+      "matched_events": 0,
+      "false_alarm_events": 2,
+      "average_latency": null
+    },
+    "evaluation_grain": "sampled_window_endpoint",
+    "sample_stride": 500
+  },
   "report": {
     "schema_version": 1,
     "dataset": "SWaT",
     "metrics": {
       "point_level": {
-        "precision": 0.4177215189873418,
-        "recall": 0.3,
-        "f1": 0.3492063492063492
+        "precision": 0.061330561330561334,
+        "recall": 0.5363636363636364,
+        "f1": 0.11007462686567165
       },
       "point_adjusted": {
-        "precision": 0.7051282051282052,
+        "precision": 0.10858835143139191,
         "recall": 1.0,
-        "f1": 0.8270676691729323
+        "f1": 0.19590382902938558
       }
     },
     "extra": {
       "train_window_stride": 3000,
       "test_window_stride": 500,
+      "benchmark_sample_step": 500,
+      "alarm_mode": "stateless_threshold",
       "evaluated_windows": 2884,
       "seed": 42,
       "threshold": 4.0,
@@ -30,7 +71,46 @@
       "persistence_window": 7,
       "min_trigger_count": 7,
       "global_model_weight": 0.3,
-      "local_model_weight": 0.05
+      "local_model_weight": 0.05,
+      "event_metrics": {
+        "precision": 0.002207505518763797,
+        "recall": 1.0,
+        "f1": 0.004405286343612334,
+        "true_events": 1,
+        "predicted_events": 453,
+        "matched_events": 1,
+        "false_alarm_events": 452,
+        "average_latency": 0.0
+      },
+      "robust_mad_baseline": {
+        "baseline": "robust_mad",
+        "quantile": 0.995,
+        "fit_rows": 324,
+        "calibration_rows": 92,
+        "evaluation_rows": 2884,
+        "threshold": 19704.1101286794,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 325,
+          "false_negative": 110,
+          "true_negative": 2449
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 2,
+          "matched_events": 0,
+          "false_alarm_events": 2,
+          "average_latency": null
+        },
+        "evaluation_grain": "sampled_window_endpoint",
+        "sample_stride": 500
+      }
     }
   }
 }
