@@ -9,6 +9,7 @@ from typing import Dict, Any, Tuple, List
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from src.agents.base_agent import BaseAgent
+from src.utils.model_inputs import build_bit_context
 from main_anomaly_contrastive import MultiModalAnomalyModel
 
 class AnomalyDetectorAgent(BaseAgent):
@@ -225,7 +226,13 @@ class AnomalyDetectorAgent(BaseAgent):
                     
                     # 모델의 bit_len을 동적으로 감지하여 bits_input 생성
                     bit_len = self.model.bit_enc.fc[0].in_features
-                    bits_input = torch.zeros(X_norm_scaled.shape[0], bit_len, device=self.device)
+                    bit_context = build_bit_context(
+                        sensor_windows,
+                        bit_len,
+                        context_bits=kwargs.get('context_bits'),
+                    )
+                    bits_input = torch.from_numpy(bit_context).to(self.device)
+                    bits_input = bits_input.unsqueeze(0).expand(X_norm_scaled.shape[0], -1)
                     
                     model_out = self.model({
                         'high': high_input,
@@ -517,5 +524,4 @@ class AnomalyDetectorAgent(BaseAgent):
                 'sensor_thresholds': {int(k): float(v) for k, v in self.sensor_thresholds.items()},
             }
         }
-
 

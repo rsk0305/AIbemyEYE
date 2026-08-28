@@ -264,3 +264,29 @@
 - v6 DOCX는 Word COM 열기 기준 5쪽, 문단 153개, 표 5개로 정상 확인되었다.
 - 렌더 스크립트는 pdf2image 모듈 부재로 실패했으며, PNG 시각 QA는 완료하지 못했다.
 
+## 2026-08-28 벤치마크 프로토콜 v2 교정 계획
+
+- 현재 SWaT와 NASA 결과는 축소 샘플 내부 회귀 지표로만 유지하고 표준 벤치마크 성능으로 해석하지 않는다.
+- 계산 자원 사용을 줄이기 위해 전체 재학습보다 코드 경로 교정, 작은 회귀 테스트, 점수 캐시 기반 평가 구조를 먼저 구현한다.
+- 모델 학습의 최소 목적은 contrastive representation과 실제 경보에 사용하는 reconstruction을 함께 학습시키는 것이다.
+- 인접행렬이 없는 경우에도 GNN 출력 토큰 차이를 보존해야 하며, 시간 위치 정보가 fusion 입력에 남아야 한다.
+- bit context는 학습과 추론에서 같은 의미와 차원을 사용한다. 값이 없을 때만 명시적으로 0 fallback을 허용한다.
+- 평가 데이터는 시간순으로 분리하고 validation에서 결정한 정책을 test에서 고정한다.
+- 주 지표는 Point F1 하나가 아니라 event precision, event recall, 탐지 지연, 오경보 구간 수를 포함한다.
+- 이번 단계에서는 대용량 SWaT/NASA 재실행을 하지 않고 작은 테스트와 정적 검증까지만 수행한다.
+- RED 테스트에서 기존 GNN 출력의 토큰 분산은 0이었고, 위치 인코딩이 없는 fusion은 토큰 역순 입력에도 같은 출력을 냈다.
+- 기존 `Trainer.pretrain_contrastive()` 한 스텝 뒤 decoder 파라미터 변화량은 0이었다.
+- GNN은 각 토큰 특징에 전체 문맥 평균을 더하도록 수정하고, fusion에는 고정 sinusoidal position encoding을 적용했다.
+- `multimodal_pretraining_loss()`를 추가해 InfoNCE와 두 augmented view의 reconstruction MSE를 함께 최적화하도록 했다.
+- 모델 회귀 테스트 5개가 통과했고 Trainer 한 스텝 뒤 decoder가 실제로 갱신됨을 확인했다.
+- RED 통합 테스트에서 NASA 명시적 context `[1, 0, 1]`이 기존 추론 경로에서는 `[0, 0, 0]`으로 모델에 전달됨을 확인했다.
+- `build_bit_context()`는 명시적 context를 우선하고, 없을 때 discrete 센서 값과 bitfield를 센서 순서대로 고정 폭 벡터로 만든다.
+- NASA 평가는 각 test window의 실제 `bits`를 ADA에 전달하고, SWaT는 등록된 discrete 센서의 마지막 값을 학습 때와 같은 순서로 구성한다.
+- 시간순 분할 모듈은 train, calibration, validation, test를 섞지 않고 연속 구간으로 분리하며 test 잔여 행을 버리지 않는다.
+- CPU 기준선은 train 정상 구간의 median과 MAD로 적합하고 calibration 정상 구간의 분위수로 임계값을 고정한 뒤 test를 한 번 평가한다.
+- 이벤트 평가는 실제·예측 구간을 일대일로 매칭해 이벤트 precision, recall, F1, 오경보 구간 수와 평균 탐지 지연을 별도로 기록한다.
+- RED 테스트에서 10칸 간격의 평가가 현재 점수는 임계값 미만인데 과거 상태 누적으로 생성된 경보를 그대로 채택할 수 있음을 명세했다.
+- 희소 샘플은 상태 누적 경보 대신 현재 점수와 고정 임계값을 사용하고, 연속 샘플일 때만 운영용 persistence 결과를 유지한다. 두 평가 스크립트는 `alarm_mode`와 실제 평가 간격을 결과에 기록한다.
+- 공유 2차원 인접행렬의 배치 처리에서 불필요한 차원이 추가되던 오류를 회귀 테스트로 재현하고 `einsum` 기반 명시적 배치 연산으로 수정했다.
+- 전체 단위 테스트 16개와 변경 Python 파일의 `py_compile` 검증이 통과했으며, 변경 파일 13개의 UTF-8 strict read와 손상 sentinel 검사에서 문제가 없었다.
+

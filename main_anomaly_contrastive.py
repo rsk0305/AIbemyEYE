@@ -196,14 +196,12 @@ class SimpleGNN(nn.Module):
         # x: (B, N, D)
         h = self.lin(x)
         if adj is None:
-            # assume fully connected
-            agg = h.mean(dim=1, keepdim=True).expand_as(h)
+            # Keep each token while adding shared context from the full sequence.
+            agg = h + h.mean(dim=1, keepdim=True)
         else:
             # adj: (N, N) or (B, N, N)
             if adj.dim() == 2:
-                agg = torch.matmul(adj, h)  # (N,N) * (B,N,H) broadcasting error; handle per batch
-                # bring to batch dimension
-                agg = agg.unsqueeze(0).expand(h.shape[0], -1, -1)
+                agg = torch.einsum('ij,bjh->bih', adj, h)
             else:
                 agg = torch.matmul(adj, h)
         h2 = F.relu(agg)
@@ -219,7 +217,17 @@ class FusionTransformer(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (B, Seq, D)
-        out = self.transformer(x)
+        positions = torch.arange(x.shape[1], device=x.device, dtype=x.dtype).unsqueeze(1)
+        frequencies = torch.exp(
+            torch.arange(0, x.shape[2], 2, device=x.device, dtype=x.dtype)
+            * (-math.log(10000.0) / x.shape[2])
+        )
+        position_encoding = torch.zeros(x.shape[1], x.shape[2], device=x.device, dtype=x.dtype)
+        position_encoding[:, 0::2] = torch.sin(positions * frequencies)
+        position_encoding[:, 1::2] = torch.cos(
+            positions * frequencies[:position_encoding[:, 1::2].shape[1]]
+        )
+        out = self.transformer(x + position_encoding.unsqueeze(0))
         return out.mean(dim=1)
 
 # ------------------------ Projection / Heads ------------------------------
@@ -358,6 +366,35 @@ def mil_bce_loss(bag_score: torch.Tensor, bag_label: torch.Tensor) -> torch.Tens
     return F.binary_cross_entropy(bag_score, bag_label.float())
 
 
+def multimodal_pretraining_loss(
+    outputs_a: Dict[str, torch.Tensor],
+    outputs_b: Dict[str, torch.Tensor],
+    batch_a: Dict[str, torch.Tensor],
+    batch_b: Dict[str, torch.Tensor],
+    temperature: float = 0.07,
+    reconstruction_weight: float = 1.0,
+) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    """Train the representation and the reconstruction score used at inference."""
+    contrastive = info_nce_loss(outputs_a['proj'], outputs_b['proj'], temperature=temperature)
+    recon_a = outputs_a['recon']
+    recon_b = outputs_b['recon']
+    target_a = batch_a['high'].reshape(batch_a['high'].shape[0], -1)
+    target_b = batch_b['high'].reshape(batch_b['high'].shape[0], -1)
+    recon_width = recon_a.shape[1]
+    if target_a.shape[1] < recon_width or target_b.shape[1] < recon_width:
+        raise ValueError('high input is shorter than the configured reconstruction width')
+
+    reconstruction = 0.5 * (
+        F.mse_loss(recon_a, target_a[:, :recon_width])
+        + F.mse_loss(recon_b, target_b[:, :recon_width])
+    )
+    loss = contrastive + reconstruction_weight * reconstruction
+    return loss, {
+        'contrastive': contrastive,
+        'reconstruction': reconstruction,
+    }
+
+
 class Trainer:
     def __init__(self, model: nn.Module, device: torch.device, config: Dict):
         self.model = model.to(device)
@@ -377,13 +414,16 @@ class Trainer:
 
                 out_a = self.model(batch_a)
                 out_b = self.model(batch_b)
-                z_a = out_a['proj']
-                z_b = out_b['proj']
-
-                loss_con = info_nce_loss(z_a, z_b, temperature=self.config.get('tau', 0.07))
+                loss, _ = multimodal_pretraining_loss(
+                    out_a,
+                    out_b,
+                    batch_a,
+                    batch_b,
+                    temperature=self.config.get('tau', 0.07),
+                    reconstruction_weight=self.config.get('lambda_recon', 1.0),
+                )
 
                 # optional CPC loss using true future embeddings if available in batch
-                loss = loss_con
                 if 'future' in batch:
                     # forward true future through model (simple approach)
                     future = batch['future'].to(self.device)
@@ -537,5 +577,3 @@ if __name__ == '__main__':
     # ... then fine-tune MIL if bag labels available
 
     print('Skeleton ready. Fill dataset and hyperparams and run training.')
-
-

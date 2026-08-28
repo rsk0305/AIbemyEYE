@@ -8,10 +8,12 @@ from torch.utils.data import DataLoader
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.utils.evaluation import binary_detection_metrics, legacy_prefixed_metrics, standard_detection_report
+from src.utils.benchmark_protocol import benchmark_prediction, event_detection_metrics, robust_baseline_report, temporal_partitions
 from src.utils.device import resolve_torch_device
+from src.utils.reproducibility import seed_everything
 from src.data.swat_loader import get_swat_data
 from src.orchestrator.orchestrator import AnomalyInspectionOrchestrator
-from main_anomaly_contrastive import Trainer
+from main_anomaly_contrastive import multimodal_pretraining_loss
 
 def point_adjust(y_pred, y_true):
     adjusted_pred = y_pred.copy()
@@ -63,9 +65,7 @@ def evaluate_swat(device='cpu'):
     print("\nEvaluating SWaT Dataset...")
     # Remove single thread restriction to utilize multicore CPU speedup
     # torch.set_num_threads(1)
-    seed = int(os.environ.get('A_EYE_SEED', '42'))
-    np.random.seed(seed)
-    torch.manual_seed(seed)
+    seed = seed_everything(int(os.environ.get('A_EYE_SEED', '42')))
     window_size = 100
 
     swat_threshold = float(os.environ.get('A_EYE_SWAT_THRESHOLD', '4.0'))
@@ -83,6 +83,23 @@ def evaluate_swat(device='cpu'):
         train_subsample_step=train_window_stride,
         test_subsample_step=test_window_stride,
     )
+    baseline_partitions = temporal_partitions(
+        len(train_ds),
+        train_fraction=0.7,
+        calibration_fraction=0.2,
+        validation_fraction=0.05,
+    )
+    train_endpoints = train_ds.windows[:, -1, :]
+    test_endpoints = test_ds.windows[:, -1, :]
+    baseline_report = robust_baseline_report(
+        train_endpoints[baseline_partitions.train],
+        train_endpoints[baseline_partitions.calibration],
+        test_endpoints,
+        y_true,
+        quantile=float(os.environ.get('A_EYE_BASELINE_QUANTILE', '0.995')),
+    )
+    baseline_report['evaluation_grain'] = 'sampled_window_endpoint'
+    baseline_report['sample_stride'] = test_window_stride
 
     # 2. Build model and train
     model_config = {
@@ -130,8 +147,6 @@ def evaluate_swat(device='cpu'):
     train_loader = DataLoader(train_ds, batch_size=16, shuffle=True, collate_fn=swat_collate_fn)
     model = orchestrator.ada.model.to(device)
     optim = torch.optim.AdamW(model.parameters(), lr=model_config.get('lr', 1e-3), weight_decay=1e-4)
-    from main_anomaly_contrastive import info_nce_loss
-
     print("Training model on SWaT normal dataset...")
     model.train()
     import time
@@ -152,17 +167,25 @@ def evaluate_swat(device='cpu'):
 
             out_a = model(batch_a)
             out_b = model(batch_b)
-            z_a = out_a['proj']
-            z_b = out_b['proj']
-
-            loss = info_nce_loss(z_a, z_b, temperature=model_config.get('tau', 0.07))
+            loss, loss_parts = multimodal_pretraining_loss(
+                out_a,
+                out_b,
+                batch_a,
+                batch_b,
+                temperature=model_config.get('tau', 0.07),
+                reconstruction_weight=model_config.get('lambda_recon', 1.0),
+            )
 
             optim.zero_grad()
             loss.backward()
             optim.step()
 
             if batch_idx % 10 == 0:
-                print(f"  Epoch {epoch+1} | Batch {batch_idx}/{len(train_loader)} | Loss: {loss.item():.4f} | Time/Batch: {time.time() - t_batch_start:.3f}s")
+                print(
+                    f"  Epoch {epoch+1} | Batch {batch_idx}/{len(train_loader)} | "
+                    f"Loss: {loss.item():.4f} | Recon: {loss_parts['reconstruction'].item():.4f} | "
+                    f"Time/Batch: {time.time() - t_batch_start:.3f}s"
+                )
                 sys.stdout.flush()
 
     print(f"Pre-train finished in {time.time() - t0:.2f}s")
@@ -199,6 +222,8 @@ def evaluate_swat(device='cpu'):
     # 4. Fast inference on SWaT test dataset
     test_pre_sampled = len(y_true) == len(test_ds)
     eval_step = 1 if test_pre_sampled else 500
+    benchmark_sample_step = test_window_stride if test_pre_sampled else eval_step
+    alarm_mode = 'stateful_persistence' if benchmark_sample_step == 1 else 'stateless_threshold'
     print(f"Running fast inference on SWaT test dataset (loader-sampled={test_pre_sampled}, eval step={eval_step})...")
     test_ds_len = len(test_ds)
 
@@ -224,7 +249,12 @@ def evaluate_swat(device='cpu'):
 
         # Call ADA process directly, bypassing diagnostic printing and CL loggers
         res = orchestrator.ada.process(sensor_windows)
-        y_pred_eval.append(1 if res['is_anomaly'] else 0)
+        y_pred_eval.append(benchmark_prediction(
+            anomaly_score=res['anomaly_score'],
+            threshold=orchestrator.ada.threshold,
+            stateful_prediction=res['is_anomaly'],
+            sample_step=benchmark_sample_step,
+        ))
 
         gt_idx = idx if test_pre_sampled else idx + window_size - 1
         y_true_eval.append(y_true[gt_idx])
@@ -236,6 +266,7 @@ def evaluate_swat(device='cpu'):
     point_metrics = binary_detection_metrics(y_true_eval, y_pred_eval)
     y_pred_pa = point_adjust(y_pred_eval, y_true_eval)
     point_adjusted_metrics = binary_detection_metrics(y_true_eval, y_pred_pa)
+    event_metrics = event_detection_metrics(y_true_eval, y_pred_eval)
 
     print("\n" + "="*60)
     print("SWaT Fast Evaluation Complete")
@@ -248,6 +279,8 @@ def evaluate_swat(device='cpu'):
     metrics = {}
     metrics.update(legacy_prefixed_metrics('pt', point_metrics))
     metrics.update(legacy_prefixed_metrics('pa', point_adjusted_metrics))
+    metrics['event'] = event_metrics
+    metrics['baseline_robust_mad'] = baseline_report
     metrics['report'] = standard_detection_report(
         'SWaT',
         point_metrics,
@@ -255,6 +288,8 @@ def evaluate_swat(device='cpu'):
         extra={
             'train_window_stride': train_window_stride,
             'test_window_stride': test_window_stride if test_pre_sampled else None,
+            'benchmark_sample_step': benchmark_sample_step,
+            'alarm_mode': alarm_mode,
             'evaluated_windows': int(len(y_true_eval)),
             'seed': seed,
             'threshold': swat_threshold,
@@ -263,6 +298,8 @@ def evaluate_swat(device='cpu'):
             'min_trigger_count': swat_min_trigger_count,
             'global_model_weight': swat_global_model_weight,
             'local_model_weight': swat_local_model_weight,
+            'event_metrics': event_metrics,
+            'robust_mad_baseline': baseline_report,
         },
     )
     return metrics
@@ -286,4 +323,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

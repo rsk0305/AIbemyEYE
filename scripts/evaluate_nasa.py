@@ -8,10 +8,12 @@ from torch.utils.data import DataLoader
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.utils.evaluation import binary_detection_metrics, legacy_prefixed_metrics, standard_detection_report
+from src.utils.benchmark_protocol import benchmark_prediction, event_detection_metrics, robust_baseline_report, temporal_partitions
 from src.utils.device import resolve_torch_device
+from src.utils.reproducibility import seed_everything
 from src.data.nasa_loader import get_nasa_channel_data, load_nasa_metadata
 from src.orchestrator.orchestrator import AnomalyInspectionOrchestrator
-from main_anomaly_contrastive import Trainer, info_nce_loss
+from main_anomaly_contrastive import Trainer, multimodal_pretraining_loss
 
 def point_adjust(y_pred, y_true):
     adjusted_pred = y_pred.copy()
@@ -37,10 +39,25 @@ def point_adjust(y_pred, y_true):
 
 def evaluate_channel(chan_id, device='cpu'):
     print(f"\nEvaluating NASA Channel: {chan_id}...")
+    seed = seed_everything(int(os.environ.get('A_EYE_SEED', '42')))
     window_size = 100
 
     # 1. Load data
     train_ds, test_ds, y_true, bit_len = get_nasa_channel_data(chan_id, window_size=window_size)
+    baseline_partitions = temporal_partitions(
+        len(train_ds.telemetry),
+        train_fraction=0.7,
+        calibration_fraction=0.2,
+        validation_fraction=0.05,
+    )
+    baseline_report = robust_baseline_report(
+        train_ds.telemetry[baseline_partitions.train],
+        train_ds.telemetry[baseline_partitions.calibration],
+        test_ds.telemetry,
+        y_true,
+        quantile=float(os.environ.get('A_EYE_BASELINE_QUANTILE', '0.995')),
+    )
+    baseline_report['evaluation_grain'] = 'raw_point_full_sequence'
 
     # 2. Build model and train
     model_config = {
@@ -85,6 +102,7 @@ def evaluate_channel(chan_id, device='cpu'):
     max_train_batches = int(os.environ.get('A_EYE_NASA_MAX_TRAIN_BATCHES', '3'))
     fit_batches = int(os.environ.get('A_EYE_NASA_FIT_BATCHES', '10'))
     eval_step = int(os.environ.get('A_EYE_NASA_EVAL_STEP', '10'))
+    alarm_mode = 'stateful_persistence' if eval_step == 1 else 'stateless_threshold'
     train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
     trainer = Trainer(orchestrator.ada.model, torch.device(device), model_config)
     trainer.model.train()
@@ -96,7 +114,14 @@ def evaluate_channel(chan_id, device='cpu'):
             batch_b = {k: v.to(device) for k, v in trainer._augment_batch(batch).items()}
             out_a = trainer.model(batch_a)
             out_b = trainer.model(batch_b)
-            loss = info_nce_loss(out_a['proj'], out_b['proj'], temperature=model_config.get('tau', 0.07))
+            loss, _ = multimodal_pretraining_loss(
+                out_a,
+                out_b,
+                batch_a,
+                batch_b,
+                temperature=model_config.get('tau', 0.07),
+                reconstruction_weight=model_config.get('lambda_recon', 1.0),
+            )
             trainer.optim.zero_grad()
             loss.backward()
             trainer.optim.step()
@@ -148,10 +173,16 @@ def evaluate_channel(chan_id, device='cpu'):
         t_window = item['high'].squeeze().numpy()
 
         # Call ADA process directly, bypassing diagnostic and CL loggers
-        res = orchestrator.ada.process([
-            {'id': 0, 'raw_signal': t_window, 'raw_rate': 1, 'type': '1word'}
-        ])
-        y_pred.append(1 if res['is_anomaly'] else 0)
+        res = orchestrator.ada.process(
+            [{'id': 0, 'raw_signal': t_window, 'raw_rate': 1, 'type': '1word'}],
+            context_bits=item['bits'].numpy(),
+        )
+        y_pred.append(benchmark_prediction(
+            anomaly_score=res['anomaly_score'],
+            threshold=orchestrator.ada.threshold,
+            stateful_prediction=res['is_anomaly'],
+            sample_step=eval_step,
+        ))
         y_true_eval.append(y_true[idx + window_size - 1])
 
     y_pred = np.array(y_pred)
@@ -161,12 +192,15 @@ def evaluate_channel(chan_id, device='cpu'):
     point_metrics = binary_detection_metrics(y_true_eval, y_pred)
     y_pred_pa = point_adjust(y_pred, y_true_eval)
     point_adjusted_metrics = binary_detection_metrics(y_true_eval, y_pred_pa)
+    event_metrics = event_detection_metrics(y_true_eval, y_pred)
 
     print(f"[{chan_id}] Pt-F1: {point_metrics['f1']:.4f} | PA-F1: {point_adjusted_metrics['f1']:.4f}")
 
     metrics = {}
     metrics.update(legacy_prefixed_metrics('pt', point_metrics))
     metrics.update(legacy_prefixed_metrics('pa', point_adjusted_metrics))
+    metrics['event'] = event_metrics
+    metrics['baseline_robust_mad'] = baseline_report
     metrics['report'] = standard_detection_report(
         'NASA SMAP/MSL',
         point_metrics,
@@ -177,7 +211,11 @@ def evaluate_channel(chan_id, device='cpu'):
             'max_train_batches': max_train_batches,
             'fit_batches': fit_batches,
             'eval_step': eval_step,
+            'alarm_mode': alarm_mode,
             'evaluated_windows': int(len(y_true_eval)),
+            'seed': seed,
+            'event_metrics': event_metrics,
+            'robust_mad_baseline': baseline_report,
         },
     )
     return metrics
@@ -202,17 +240,23 @@ def main():
 
     avg_pt_f1 = np.mean([r['pt_f1'] for r in results.values()])
     avg_pa_f1 = np.mean([r['pa_f1'] for r in results.values()])
+    avg_baseline_pt_f1 = np.mean([r['baseline_robust_mad']['point']['f1'] for r in results.values()])
+    avg_baseline_event_f1 = np.mean([r['baseline_robust_mad']['event']['f1'] for r in results.values()])
 
     report = {
         'channels': results,
         'average_point_f1': float(avg_pt_f1),
         'average_pa_f1': float(avg_pa_f1),
+        'average_baseline_point_f1': float(avg_baseline_pt_f1),
+        'average_baseline_event_f1': float(avg_baseline_event_f1),
         'report': {
             'schema_version': 1,
             'dataset': 'NASA SMAP/MSL',
             'metrics': {
                 'average_point_f1': float(avg_pt_f1),
                 'average_point_adjusted_f1': float(avg_pa_f1),
+                'average_baseline_point_f1': float(avg_baseline_pt_f1),
+                'average_baseline_event_f1': float(avg_baseline_event_f1),
             },
             'channels': selected_channels,
         }
@@ -232,4 +276,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
