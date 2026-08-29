@@ -51,7 +51,56 @@ def load_nasa_metadata(csv_path="dataset/NASA/labeled_anomalies.csv"):
     return metadata
 
 
-def get_nasa_channel_data(chan_id, base_dir="dataset/NASA/data/data", window_size=100):
+def normalize_nasa_telemetry(
+    train_telemetry,
+    test_telemetry,
+    reference_fraction=1.0,
+):
+    """Scale telemetry from a declared prefix of the normal train sequence."""
+    train = np.asarray(train_telemetry, dtype=np.float64).reshape(-1)
+    test = np.asarray(test_telemetry, dtype=np.float64).reshape(-1)
+    if train.size == 0 or test.size == 0:
+        raise ValueError("train and test telemetry must be non-empty")
+    if not np.isfinite(train).all() or not np.isfinite(test).all():
+        raise ValueError("train and test telemetry must contain only finite values")
+    if not 0.0 < reference_fraction <= 1.0:
+        raise ValueError("reference_fraction must be in (0, 1]")
+
+    reference_rows = max(1, int(train.size * reference_fraction))
+    reference = train[:reference_rows]
+    minimum = float(np.min(reference))
+    maximum = float(np.max(reference))
+    scale = maximum - minimum
+    constant_reference = scale < 1e-12
+    if constant_reference:
+        scale = 1.0
+        train_scaled = 0.5 + (train - minimum) / scale
+        test_scaled = 0.5 + (test - minimum) / scale
+    else:
+        train_scaled = (train - minimum) / scale
+        test_scaled = (test - minimum) / scale
+    summary = {
+        "method": "fit_reference_minmax",
+        "reference_fraction": float(reference_fraction),
+        "reference_rows": reference_rows,
+        "minimum": minimum,
+        "maximum": maximum,
+        "constant_reference": bool(constant_reference),
+        "constant_reference_center": 0.5 if constant_reference else None,
+    }
+    return (
+        np.clip(train_scaled, 0.0, 1.0),
+        np.clip(test_scaled, 0.0, 1.0),
+        summary,
+    )
+
+
+def get_nasa_channel_data(
+    chan_id,
+    base_dir="dataset/NASA/data/data",
+    window_size=100,
+    normalization_reference_fraction=1.0,
+):
     """
     Load train and test telemetry and bits for a single NASA channel,
     apply min-max normalization, and build Datasets.
@@ -68,14 +117,11 @@ def get_nasa_channel_data(chan_id, base_dir="dataset/NASA/data/data", window_siz
     train_bits = train_data[:, 1:]
     test_bits = test_data[:, 1:]
 
-    t_min = train_tele.min()
-    t_max = train_tele.max()
-    t_diff = t_max - t_min
-    if t_diff < 1e-6:
-        t_diff = 1.0
-
-    train_tele_norm = np.clip((train_tele - t_min) / t_diff, 0.0, 1.0)
-    test_tele_norm = np.clip((test_tele - t_min) / t_diff, 0.0, 1.0)
+    train_tele_norm, test_tele_norm, normalization_summary = normalize_nasa_telemetry(
+        train_tele,
+        test_tele,
+        reference_fraction=normalization_reference_fraction,
+    )
 
     metadata = load_nasa_metadata()
     anom_seqs = metadata.get(chan_id, {}).get('anomaly_sequences', [])
@@ -85,4 +131,6 @@ def get_nasa_channel_data(chan_id, base_dir="dataset/NASA/data/data", window_siz
 
     train_ds = NASADataset(train_tele_norm, train_bits, window_size=window_size)
     test_ds = NASADataset(test_tele_norm, test_bits, window_size=window_size)
+    train_ds.normalization_summary = normalization_summary
+    test_ds.normalization_summary = normalization_summary
     return train_ds, test_ds, y_true, train_bits.shape[1]
