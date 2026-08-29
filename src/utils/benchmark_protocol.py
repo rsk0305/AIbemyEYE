@@ -74,6 +74,34 @@ def calibrate_quantile_threshold(scores: np.ndarray, quantile: float = 0.995) ->
     return float(np.quantile(values, quantile))
 
 
+def average_precision(y_true: np.ndarray, scores: np.ndarray) -> float:
+    """Compute threshold-independent average precision with tied scores grouped."""
+    raw_labels = np.asarray(y_true).reshape(-1)
+    values = np.asarray(scores, dtype=np.float64).reshape(-1)
+    if raw_labels.size == 0 or raw_labels.size != values.size:
+        raise ValueError("y_true and scores must have the same non-zero length")
+    if not np.isfinite(values).all():
+        raise ValueError("scores must contain only finite values")
+    if not np.isin(raw_labels, [0, 1]).all():
+        raise ValueError("y_true must contain only binary labels")
+    labels = raw_labels.astype(np.int32)
+
+    positive_count = int(labels.sum())
+    if positive_count == 0:
+        return 0.0
+
+    order = np.argsort(-values, kind="mergesort")
+    sorted_scores = values[order]
+    sorted_labels = labels[order]
+    group_ends = np.r_[np.flatnonzero(np.diff(sorted_scores)), labels.size - 1]
+    true_positives = np.cumsum(sorted_labels)[group_ends]
+    predicted_positives = group_ends + 1
+    precision = true_positives / predicted_positives
+    recall = true_positives / positive_count
+    recall_step = np.diff(np.r_[0.0, recall])
+    return float(np.sum(recall_step * precision))
+
+
 def benchmark_prediction(
     anomaly_score: float,
     threshold: float,

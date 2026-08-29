@@ -113,6 +113,21 @@ class BenchmarkProtocolTest(unittest.TestCase):
         self.assertEqual(report["evaluation_rows"], 4)
         self.assertEqual(report["point"]["true_positive"], 2)
 
+    def test_average_precision_uses_score_ranking_without_test_threshold(self):
+        module = self._module()
+        labels = np.array([0, 1, 0, 1])
+        scores = np.array([0.1, 0.9, 0.8, 0.7])
+
+        result = module.average_precision(labels, scores)
+
+        self.assertAlmostEqual(result, (1.0 + 2.0 / 3.0) / 2.0)
+
+    def test_average_precision_rejects_fractional_labels(self):
+        module = self._module()
+
+        with self.assertRaises(ValueError):
+            module.average_precision(np.array([0.0, 0.5, 1.0]), np.array([0.1, 0.2, 0.3]))
+
 
 if __name__ == "__main__":
     unittest.main()
