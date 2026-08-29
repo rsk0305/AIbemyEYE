@@ -1,0 +1,877 @@
+{
+  "schema_version": 1,
+  "algorithm": "multiscale_probabilistic_forecaster",
+  "generated_at": "2026-08-29T12:22:34.656694+09:00",
+  "seed": 42,
+  "datasets": {
+    "nasa": {
+      "channels": {
+        "A-1": {
+          "algorithm": "multiscale_probabilistic_forecaster",
+          "threshold": 189.34954442461688,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 17,
+            "false_negative": 8,
+            "true_negative": 830
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 17,
+            "matched_events": 0,
+            "false_alarm_events": 17,
+            "average_latency": null
+          },
+          "ranking": {
+            "average_precision": 0.02533343553084766,
+            "forecast_average_precision": 0.02494741759100906,
+            "state_average_precision": 0.019931710759814453
+          },
+          "score_summary": {
+            "minimum": 0.03372134007150812,
+            "median": 0.9883390860212669,
+            "mean": 77.48304838164094,
+            "maximum": 26729.136113746117
+          },
+          "protocol": {
+            "fit_windows": 1847,
+            "calibration_windows": 457,
+            "calibration_scores": 457,
+            "validation_windows": 40,
+            "evaluation_windows": 855,
+            "adaptation_windows": 0,
+            "reference_source": "train_holdout",
+            "partition_purge_windows": 99,
+            "normal_only_fit": true,
+            "test_labels_used_for_threshold": false,
+            "calibration_quantile": 0.995,
+            "validation_false_positive_rate": 0.05,
+            "window_size": 100,
+            "sample_step": 10,
+            "evaluation_grain": "rolling_window_endpoint",
+            "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+            "event_metric_scope": "sampled_label_stream_internal_regression"
+          },
+          "model": {
+            "scales": [
+              4,
+              16,
+              64
+            ],
+            "ridge": 0.05,
+            "augment_targets": false,
+            "target_step": 4,
+            "training_windows": 1847,
+            "training_pairs": 1847,
+            "channels": 25,
+            "feature_count": 250,
+            "coefficient_count": 6250
+          },
+          "runtime_seconds": {
+            "fit": 0.15623649999997724,
+            "adaptation": 0.0,
+            "evaluation_scoring": 0.0704262999997809,
+            "evaluation_windows_per_second": 12140.350976874548
+          },
+          "dataset": "NASA SMAP/MSL",
+          "channel": "A-1",
+          "wall_seconds_including_loading": 0.2847068000000945,
+          "post_warmup_static": {
+            "algorithm": "multiscale_probabilistic_forecaster",
+            "threshold": 189.34954442461688,
+            "point": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "true_positive": 0,
+              "false_positive": 15,
+              "false_negative": 8,
+              "true_negative": 745
+            },
+            "point_adjusted": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "event": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "true_events": 1,
+              "predicted_events": 15,
+              "matched_events": 0,
+              "false_alarm_events": 15,
+              "average_latency": null
+            },
+            "ranking": {
+              "average_precision": 0.028683041226216476,
+              "forecast_average_precision": 0.028256240040266667,
+              "state_average_precision": 0.022183420062688426
+            },
+            "score_summary": {
+              "minimum": 0.033721340071508135,
+              "median": 1.0209211412649706,
+              "mean": 82.55764027831567,
+              "maximum": 26729.136113746117
+            },
+            "protocol": {
+              "fit_windows": 1847,
+              "calibration_windows": 457,
+              "calibration_scores": 457,
+              "validation_windows": 40,
+              "evaluation_windows": 768,
+              "adaptation_windows": 0,
+              "reference_source": "train_holdout",
+              "partition_purge_windows": 99,
+              "normal_only_fit": true,
+              "test_labels_used_for_threshold": false,
+              "calibration_quantile": 0.995,
+              "validation_false_positive_rate": 0.05,
+              "window_size": 100,
+              "sample_step": 10,
+              "evaluation_grain": "post_warmup_rolling_window_endpoint",
+              "warmup_fraction": 0.1,
+              "warmup_raw_points": 864,
+              "comparison_role": "post_warmup_static_control",
+              "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+              "event_metric_scope": "sampled_label_stream_internal_regression"
+            },
+            "model": {
+              "scales": [
+                4,
+                16,
+                64
+              ],
+              "ridge": 0.05,
+              "augment_targets": false,
+              "target_step": 4,
+              "training_windows": 1847,
+              "training_pairs": 1847,
+              "channels": 25,
+              "feature_count": 250,
+              "coefficient_count": 6250
+            },
+            "runtime_seconds": {
+              "fit": 0.1772024000001693,
+              "adaptation": 0.0,
+              "evaluation_scoring": 0.09471600000051694,
+              "evaluation_windows_per_second": 8108.450525738084
+            },
+            "dataset": "NASA SMAP/MSL",
+            "channel": "A-1"
+          },
+          "deployment_adapted": {
+            "algorithm": "multiscale_probabilistic_forecaster",
+            "threshold": 59.56152890924848,
+            "point": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "true_positive": 0,
+              "false_positive": 18,
+              "false_negative": 8,
+              "true_negative": 742
+            },
+            "point_adjusted": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "event": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "true_events": 1,
+              "predicted_events": 18,
+              "matched_events": 0,
+              "false_alarm_events": 18,
+              "average_latency": null
+            },
+            "ranking": {
+              "average_precision": 0.03270661641799254,
+              "forecast_average_precision": 0.03233101846552122,
+              "state_average_precision": 0.02242334899593358
+            },
+            "score_summary": {
+              "minimum": 0.04747669411044859,
+              "median": 0.6978467165467654,
+              "mean": 66.70284830737096,
+              "maximum": 23655.01173980202
+            },
+            "protocol": {
+              "fit_windows": 1847,
+              "calibration_windows": 333,
+              "calibration_scores": 333,
+              "validation_windows": 0,
+              "evaluation_windows": 768,
+              "adaptation_windows": 333,
+              "reference_source": "deployment_warmup",
+              "partition_purge_windows": 99,
+              "normal_only_fit": true,
+              "test_labels_used_for_threshold": false,
+              "calibration_quantile": 0.995,
+              "validation_false_positive_rate": null,
+              "window_size": 100,
+              "sample_step": 10,
+              "evaluation_grain": "post_warmup_rolling_window_endpoint",
+              "warmup_fraction": 0.1,
+              "warmup_raw_points": 864,
+              "warmup_assumption": "fixed_initial_unlabeled_normal_period",
+              "warmup_positive_labels": 0,
+              "warmup_assumption_satisfied": true,
+              "comparison_role": "deployment_adapted",
+              "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+              "event_metric_scope": "sampled_label_stream_internal_regression"
+            },
+            "model": {
+              "scales": [
+                4,
+                16,
+                64
+              ],
+              "ridge": 0.05,
+              "augment_targets": false,
+              "target_step": 4,
+              "training_windows": 1847,
+              "training_pairs": 1847,
+              "channels": 25,
+              "feature_count": 250,
+              "coefficient_count": 6250,
+              "adaptation_windows": 333
+            },
+            "runtime_seconds": {
+              "fit": 0.22154630000022735,
+              "adaptation": 0.024187399999391346,
+              "evaluation_scoring": 0.0736944999998741,
+              "evaluation_windows_per_second": 10421.401868542593
+            },
+            "dataset": "NASA SMAP/MSL",
+            "channel": "A-1",
+            "valid_for_comparison": true
+          },
+          "channel_wall_seconds": 0.9909655000001294
+        },
+        "D-1": {
+          "algorithm": "multiscale_probabilistic_forecaster",
+          "threshold": 96.7565595445182,
+          "point": {
+            "precision": 0.5,
+            "recall": 0.006153846153846154,
+            "f1": 0.0121580547112462,
+            "true_positive": 2,
+            "false_positive": 2,
+            "false_negative": 323,
+            "true_negative": 514
+          },
+          "point_adjusted": {
+            "precision": 0.9938837920489296,
+            "recall": 1.0,
+            "f1": 0.9969325153374233
+          },
+          "event": {
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "true_events": 1,
+            "predicted_events": 4,
+            "matched_events": 1,
+            "false_alarm_events": 3,
+            "average_latency": 5.0
+          },
+          "ranking": {
+            "average_precision": 0.7234402296755539,
+            "forecast_average_precision": 0.724458393155192,
+            "state_average_precision": 0.7689601764232895
+          },
+          "score_summary": {
+            "minimum": 0.1825535617311739,
+            "median": 5.506631286896091,
+            "mean": 8.36982842350515,
+            "maximum": 827.7667931293824
+          },
+          "protocol": {
+            "fit_windows": 1825,
+            "calibration_windows": 451,
+            "calibration_scores": 451,
+            "validation_windows": 38,
+            "evaluation_windows": 841,
+            "adaptation_windows": 0,
+            "reference_source": "train_holdout",
+            "partition_purge_windows": 99,
+            "normal_only_fit": true,
+            "test_labels_used_for_threshold": false,
+            "calibration_quantile": 0.995,
+            "validation_false_positive_rate": 0.0,
+            "window_size": 100,
+            "sample_step": 10,
+            "evaluation_grain": "rolling_window_endpoint",
+            "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+            "event_metric_scope": "sampled_label_stream_internal_regression"
+          },
+          "model": {
+            "scales": [
+              4,
+              16,
+              64
+            ],
+            "ridge": 0.05,
+            "augment_targets": false,
+            "target_step": 4,
+            "training_windows": 1825,
+            "training_pairs": 1825,
+            "channels": 25,
+            "feature_count": 250,
+            "coefficient_count": 6250
+          },
+          "runtime_seconds": {
+            "fit": 0.16343959999994695,
+            "adaptation": 0.0,
+            "evaluation_scoring": 0.0641762999994171,
+            "evaluation_windows_per_second": 13104.52612580717
+          },
+          "dataset": "NASA SMAP/MSL",
+          "channel": "D-1",
+          "wall_seconds_including_loading": 0.2878249000004871,
+          "post_warmup_static": {
+            "algorithm": "multiscale_probabilistic_forecaster",
+            "threshold": 96.7565595445182,
+            "point": {
+              "precision": 1.0,
+              "recall": 0.006153846153846154,
+              "f1": 0.012232415902140673,
+              "true_positive": 2,
+              "false_positive": 0,
+              "false_negative": 323,
+              "true_negative": 431
+            },
+            "point_adjusted": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "event": {
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6666666666666666,
+              "true_events": 1,
+              "predicted_events": 2,
+              "matched_events": 1,
+              "false_alarm_events": 1,
+              "average_latency": 5.0
+            },
+            "ranking": {
+              "average_precision": 0.7586702842371309,
+              "forecast_average_precision": 0.7617148032548847,
+              "state_average_precision": 0.8044375239610028
+            },
+            "score_summary": {
+              "minimum": 0.3066040963628451,
+              "median": 7.300221649104762,
+              "mean": 7.377018685423169,
+              "maximum": 212.62969388680958
+            },
+            "protocol": {
+              "fit_windows": 1825,
+              "calibration_windows": 451,
+              "calibration_scores": 451,
+              "validation_windows": 38,
+              "evaluation_windows": 756,
+              "adaptation_windows": 0,
+              "reference_source": "train_holdout",
+              "partition_purge_windows": 99,
+              "normal_only_fit": true,
+              "test_labels_used_for_threshold": false,
+              "calibration_quantile": 0.995,
+              "validation_false_positive_rate": 0.0,
+              "window_size": 100,
+              "sample_step": 10,
+              "evaluation_grain": "post_warmup_rolling_window_endpoint",
+              "warmup_fraction": 0.1,
+              "warmup_raw_points": 850,
+              "comparison_role": "post_warmup_static_control",
+              "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+              "event_metric_scope": "sampled_label_stream_internal_regression"
+            },
+            "model": {
+              "scales": [
+                4,
+                16,
+                64
+              ],
+              "ridge": 0.05,
+              "augment_targets": false,
+              "target_step": 4,
+              "training_windows": 1825,
+              "training_pairs": 1825,
+              "channels": 25,
+              "feature_count": 250,
+              "coefficient_count": 6250
+            },
+            "runtime_seconds": {
+              "fit": 0.16559460000007675,
+              "adaptation": 0.0,
+              "evaluation_scoring": 0.056447799999659765,
+              "evaluation_windows_per_second": 13392.904595122516
+            },
+            "dataset": "NASA SMAP/MSL",
+            "channel": "D-1"
+          },
+          "deployment_adapted": {
+            "algorithm": "multiscale_probabilistic_forecaster",
+            "threshold": 203.24790111525488,
+            "point": {
+              "precision": 1.0,
+              "recall": 0.003076923076923077,
+              "f1": 0.006134969325153375,
+              "true_positive": 1,
+              "false_positive": 0,
+              "false_negative": 324,
+              "true_negative": 431
+            },
+            "point_adjusted": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "event": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "true_events": 1,
+              "predicted_events": 1,
+              "matched_events": 1,
+              "false_alarm_events": 0,
+              "average_latency": 5.0
+            },
+            "ranking": {
+              "average_precision": 0.7571547977206096,
+              "forecast_average_precision": 0.7409647976154057,
+              "state_average_precision": 0.91312031617103
+            },
+            "score_summary": {
+              "minimum": 0.02119140112496798,
+              "median": 6.287761238211722,
+              "mean": 6.9790237526544905,
+              "maximum": 216.24697018435708
+            },
+            "protocol": {
+              "fit_windows": 1825,
+              "calibration_windows": 326,
+              "calibration_scores": 326,
+              "validation_windows": 0,
+              "evaluation_windows": 756,
+              "adaptation_windows": 326,
+              "reference_source": "deployment_warmup",
+              "partition_purge_windows": 99,
+              "normal_only_fit": true,
+              "test_labels_used_for_threshold": false,
+              "calibration_quantile": 0.995,
+              "validation_false_positive_rate": null,
+              "window_size": 100,
+              "sample_step": 10,
+              "evaluation_grain": "post_warmup_rolling_window_endpoint",
+              "warmup_fraction": 0.1,
+              "warmup_raw_points": 850,
+              "warmup_assumption": "fixed_initial_unlabeled_normal_period",
+              "warmup_positive_labels": 0,
+              "warmup_assumption_satisfied": true,
+              "comparison_role": "deployment_adapted",
+              "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+              "event_metric_scope": "sampled_label_stream_internal_regression"
+            },
+            "model": {
+              "scales": [
+                4,
+                16,
+                64
+              ],
+              "ridge": 0.05,
+              "augment_targets": false,
+              "target_step": 4,
+              "training_windows": 1825,
+              "training_pairs": 1825,
+              "channels": 25,
+              "feature_count": 250,
+              "coefficient_count": 6250,
+              "adaptation_windows": 326
+            },
+            "runtime_seconds": {
+              "fit": 0.17308430000048247,
+              "adaptation": 0.021485199999915494,
+              "evaluation_scoring": 0.05995919999986654,
+              "evaluation_windows_per_second": 12608.573830232603
+            },
+            "dataset": "NASA SMAP/MSL",
+            "channel": "D-1",
+            "valid_for_comparison": true
+          },
+          "channel_wall_seconds": 0.860770300000695
+        },
+        "M-1": {
+          "algorithm": "multiscale_probabilistic_forecaster",
+          "threshold": 45.90247898820813,
+          "point": {
+            "precision": 1.0,
+            "recall": 0.017543859649122806,
+            "f1": 0.034482758620689655,
+            "true_positive": 2,
+            "false_positive": 0,
+            "false_negative": 112,
+            "true_negative": 104
+          },
+          "point_adjusted": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "event": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.6666666666666666,
+            "true_events": 1,
+            "predicted_events": 2,
+            "matched_events": 1,
+            "false_alarm_events": 1,
+            "average_latency": 29.0
+          },
+          "ranking": {
+            "average_precision": 0.5081446267136741,
+            "forecast_average_precision": 0.5167691009038228,
+            "state_average_precision": 0.4961445493395496
+          },
+          "score_summary": {
+            "minimum": 0.05833843036325384,
+            "median": 0.5378797303529469,
+            "mean": 2.0692114164913984,
+            "maximum": 95.15269785120871
+          },
+          "protocol": {
+            "fit_windows": 1378,
+            "calibration_windows": 323,
+            "calibration_scores": 323,
+            "validation_windows": 6,
+            "evaluation_windows": 218,
+            "adaptation_windows": 0,
+            "reference_source": "train_holdout",
+            "partition_purge_windows": 99,
+            "normal_only_fit": true,
+            "test_labels_used_for_threshold": false,
+            "calibration_quantile": 0.995,
+            "validation_false_positive_rate": 0.0,
+            "window_size": 100,
+            "sample_step": 10,
+            "evaluation_grain": "rolling_window_endpoint",
+            "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+            "event_metric_scope": "sampled_label_stream_internal_regression"
+          },
+          "model": {
+            "scales": [
+              4,
+              16,
+              64
+            ],
+            "ridge": 0.05,
+            "augment_targets": false,
+            "target_step": 4,
+            "training_windows": 1378,
+            "training_pairs": 1378,
+            "channels": 55,
+            "feature_count": 550,
+            "coefficient_count": 30250
+          },
+          "runtime_seconds": {
+            "fit": 0.2847490000003745,
+            "adaptation": 0.0,
+            "evaluation_scoring": 0.03742390000024898,
+            "evaluation_windows_per_second": 5825.1545135207625
+          },
+          "dataset": "NASA SMAP/MSL",
+          "channel": "M-1",
+          "wall_seconds_including_loading": 0.4033298000003924,
+          "post_warmup_static": {
+            "algorithm": "multiscale_probabilistic_forecaster",
+            "threshold": 45.90247898820813,
+            "point": {
+              "precision": 1.0,
+              "recall": 0.017543859649122806,
+              "f1": 0.034482758620689655,
+              "true_positive": 2,
+              "false_positive": 0,
+              "false_negative": 112,
+              "true_negative": 81
+            },
+            "point_adjusted": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "event": {
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6666666666666666,
+              "true_events": 1,
+              "predicted_events": 2,
+              "matched_events": 1,
+              "false_alarm_events": 1,
+              "average_latency": 29.0
+            },
+            "ranking": {
+              "average_precision": 0.5507005597410215,
+              "forecast_average_precision": 0.5623548190856273,
+              "state_average_precision": 0.5175165020081539
+            },
+            "score_summary": {
+              "minimum": 0.07243112620907742,
+              "median": 0.5690079636073396,
+              "mean": 2.1730794929635593,
+              "maximum": 95.15269785120871
+            },
+            "protocol": {
+              "fit_windows": 1378,
+              "calibration_windows": 323,
+              "calibration_scores": 323,
+              "validation_windows": 6,
+              "evaluation_windows": 195,
+              "adaptation_windows": 0,
+              "reference_source": "train_holdout",
+              "partition_purge_windows": 99,
+              "normal_only_fit": true,
+              "test_labels_used_for_threshold": false,
+              "calibration_quantile": 0.995,
+              "validation_false_positive_rate": 0.0,
+              "window_size": 100,
+              "sample_step": 10,
+              "evaluation_grain": "post_warmup_rolling_window_endpoint",
+              "warmup_fraction": 0.1,
+              "warmup_raw_points": 227,
+              "comparison_role": "post_warmup_static_control",
+              "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+              "event_metric_scope": "sampled_label_stream_internal_regression"
+            },
+            "model": {
+              "scales": [
+                4,
+                16,
+                64
+              ],
+              "ridge": 0.05,
+              "augment_targets": false,
+              "target_step": 4,
+              "training_windows": 1378,
+              "training_pairs": 1378,
+              "channels": 55,
+              "feature_count": 550,
+              "coefficient_count": 30250
+            },
+            "runtime_seconds": {
+              "fit": 0.30079399999976886,
+              "adaptation": 0.0,
+              "evaluation_scoring": 0.026740199999949255,
+              "evaluation_windows_per_second": 7292.39123119386
+            },
+            "dataset": "NASA SMAP/MSL",
+            "channel": "M-1"
+          },
+          "deployment_adapted": {
+            "algorithm": "multiscale_probabilistic_forecaster",
+            "threshold": 30.620544329964087,
+            "point": {
+              "precision": 0.6262626262626263,
+              "recall": 0.543859649122807,
+              "f1": 0.5821596244131456,
+              "true_positive": 62,
+              "false_positive": 37,
+              "false_negative": 52,
+              "true_negative": 44
+            },
+            "point_adjusted": {
+              "precision": 0.7549668874172185,
+              "recall": 1.0,
+              "f1": 0.8603773584905661
+            },
+            "event": {
+              "precision": 0.02564102564102564,
+              "recall": 1.0,
+              "f1": 0.05,
+              "true_events": 1,
+              "predicted_events": 39,
+              "matched_events": 1,
+              "false_alarm_events": 38,
+              "average_latency": 0.0
+            },
+            "ranking": {
+              "average_precision": 0.5361869513619902,
+              "forecast_average_precision": 0.6310830250891002,
+              "state_average_precision": 0.5227767952706341
+            },
+            "score_summary": {
+              "minimum": 0.8952260144855604,
+              "median": 30.96652264637333,
+              "mean": 52.41250772413096,
+              "maximum": 799.8459094287766
+            },
+            "protocol": {
+              "fit_windows": 1378,
+              "calibration_windows": 15,
+              "calibration_scores": 15,
+              "validation_windows": 0,
+              "evaluation_windows": 195,
+              "adaptation_windows": 14,
+              "reference_source": "deployment_warmup",
+              "partition_purge_windows": 99,
+              "normal_only_fit": true,
+              "test_labels_used_for_threshold": false,
+              "calibration_quantile": 0.995,
+              "validation_false_positive_rate": null,
+              "window_size": 100,
+              "sample_step": 10,
+              "evaluation_grain": "post_warmup_rolling_window_endpoint",
+              "warmup_fraction": 0.1,
+              "warmup_raw_points": 227,
+              "warmup_assumption": "fixed_initial_unlabeled_normal_period",
+              "warmup_positive_labels": 0,
+              "warmup_assumption_satisfied": true,
+              "comparison_role": "deployment_adapted",
+              "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+              "event_metric_scope": "sampled_label_stream_internal_regression"
+            },
+            "model": {
+              "scales": [
+                4,
+                16,
+                64
+              ],
+              "ridge": 0.05,
+              "augment_targets": false,
+              "target_step": 4,
+              "training_windows": 1378,
+              "training_pairs": 1378,
+              "channels": 55,
+              "feature_count": 550,
+              "coefficient_count": 30250,
+              "adaptation_windows": 14
+            },
+            "runtime_seconds": {
+              "fit": 0.279312800000298,
+              "adaptation": 0.0028093999999327934,
+              "evaluation_scoring": 0.0289452999995774,
+              "evaluation_windows_per_second": 6736.845014660307
+            },
+            "dataset": "NASA SMAP/MSL",
+            "channel": "M-1",
+            "valid_for_comparison": true
+          },
+          "channel_wall_seconds": 1.1448851000004652
+        }
+      },
+      "average_precision": 0.41897276397335853,
+      "average_point_f1": 0.015546937777311953,
+      "average_point_adjusted_f1": 0.6656441717791411,
+      "total_wall_seconds": 2.9966209000012896,
+      "post_warmup_static_average_precision": 0.44601796173478964,
+      "post_warmup_static_average_point_f1": 0.015571724840943442,
+      "deployment_adapted_valid_channels": [
+        "A-1",
+        "D-1",
+        "M-1"
+      ],
+      "deployment_adapted_average_precision": 0.4420161218335308,
+      "deployment_adapted_average_point_f1": 0.1960981979127663,
+      "deployment_adapted_average_point_adjusted_f1": 0.620125786163522
+    },
+    "swat": {
+      "algorithm": "multiscale_probabilistic_forecaster",
+      "threshold": 233.5012167181578,
+      "point": {
+        "precision": 0.36097560975609755,
+        "recall": 0.6727272727272727,
+        "f1": 0.46984126984126984,
+        "true_positive": 74,
+        "false_positive": 131,
+        "false_negative": 36,
+        "true_negative": 2643
+      },
+      "point_adjusted": {
+        "precision": 0.45643153526970953,
+        "recall": 1.0,
+        "f1": 0.6267806267806268
+      },
+      "event": {
+        "precision": 0.00819672131147541,
+        "recall": 1.0,
+        "f1": 0.016260162601626018,
+        "true_events": 1,
+        "predicted_events": 122,
+        "matched_events": 1,
+        "false_alarm_events": 121,
+        "average_latency": 0.0
+      },
+      "ranking": {
+        "average_precision": 0.4438172383170274,
+        "forecast_average_precision": 0.3182357196014964,
+        "state_average_precision": 0.5130869286172893
+      },
+      "score_summary": {
+        "minimum": 0.1297482227340861,
+        "median": 13.857321708406872,
+        "mean": 80.94955790956901,
+        "maximum": 9811.981300339025
+      },
+      "protocol": {
+        "fit_windows": 324,
+        "calibration_windows": 92,
+        "calibration_scores": 92,
+        "validation_windows": 23,
+        "evaluation_windows": 2884,
+        "adaptation_windows": 0,
+        "reference_source": "train_holdout",
+        "partition_purge_windows": 0,
+        "normal_only_fit": true,
+        "test_labels_used_for_threshold": false,
+        "calibration_quantile": 0.995,
+        "validation_false_positive_rate": 0.0,
+        "window_size": 100,
+        "train_window_stride": 3000,
+        "test_window_stride": 500,
+        "sample_step": 500,
+        "evaluation_grain": "sampled_window_endpoint",
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "model": {
+        "scales": [
+          4,
+          16,
+          64
+        ],
+        "ridge": 0.05,
+        "augment_targets": true,
+        "target_step": 4,
+        "training_windows": 324,
+        "training_pairs": 3240,
+        "channels": 51,
+        "feature_count": 510,
+        "coefficient_count": 26010
+      },
+      "runtime_seconds": {
+        "fit": 0.764230900000257,
+        "adaptation": 0.0,
+        "evaluation_scoring": 0.6261824000002889,
+        "evaluation_windows_per_second": 4605.686777524678
+      },
+      "dataset": "SWaT",
+      "wall_seconds_including_loading": 37.9881019000004
+    }
+  }
+}
