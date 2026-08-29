@@ -1,0 +1,3529 @@
+{
+  "schema_version": 1,
+  "algorithm": "normal_calibrated_neural_predictive_bonferroni_min_p",
+  "generated_at": "2026-08-29T21:30:24.738373+09:00",
+  "device": {
+    "type": "cpu",
+    "index": null,
+    "torch_version": "2.12.0+cpu"
+  },
+  "seed": 42,
+  "selection_policy": {
+    "fusion_rule": "bonferroni_min_p",
+    "rule_selected_before_all_reported_channel_evaluation": true,
+    "development_channel_labels_informed_rule_iteration": false,
+    "rule_frozen_before_upper_tail_validation": true,
+    "normalization_protocol_corrected_after_initial_upper_tail_run": true,
+    "upper_tail_channels_used_for_rejection_not_rule_selection": true,
+    "prior_comparison_channels": [
+      "A-1",
+      "D-1",
+      "M-1"
+    ],
+    "development_holdout_channels": [
+      "E-1",
+      "P-1",
+      "M-6"
+    ],
+    "mahalanobis_validation_channels": [
+      "A-5",
+      "E-12",
+      "S-1",
+      "T-1"
+    ],
+    "upper_tail_predeclared_validation_channels": [
+      "A-2",
+      "B-1",
+      "C-1",
+      "D-2",
+      "F-1",
+      "M-2"
+    ],
+    "test_labels_used_for_score_fit_or_threshold": false
+  },
+  "channels": {
+    "A-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "A-1",
+      "spacecraft": "SMAP",
+      "role": "prior_comparison",
+      "fusion": {
+        "threshold": 4.377851263263401,
+        "point": {
+          "precision": 0.009400705052878966,
+          "recall": 1.0,
+          "f1": 0.018626309662398137,
+          "true_positive": 8,
+          "false_positive": 843,
+          "false_negative": 0,
+          "true_negative": 4
+        },
+        "event": {
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1": 0.5,
+          "true_events": 1,
+          "predicted_events": 3,
+          "matched_events": 1,
+          "false_alarm_events": 2,
+          "average_latency": 0.0
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.009400705052878966,
+          "recall": 1.0,
+          "f1": 0.018626309662398137
+        },
+        "ranking": {
+          "average_precision": 0.009400705052878966
+        },
+        "score_summary": {
+          "minimum": 0.21377336302662506,
+          "median": 5.476463551931511,
+          "mean": 5.454026491984476,
+          "maximum": 5.476463551931511
+        },
+        "validation_false_positive_rate": 0.0041928721174004195
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.10803922265768051,
+          "point": {
+            "precision": 0.009400705052878966,
+            "recall": 1.0,
+            "f1": 0.018626309662398137,
+            "true_positive": 8,
+            "false_positive": 843,
+            "false_negative": 0,
+            "true_negative": 4
+          },
+          "event": {
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "true_events": 1,
+            "predicted_events": 3,
+            "matched_events": 1,
+            "false_alarm_events": 2,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.009400705052878966,
+            "recall": 1.0,
+            "f1": 0.018626309662398137
+          },
+          "ranking": {
+            "average_precision": 0.00847254541465875
+          },
+          "score_summary": {
+            "minimum": 0.10626070201396942,
+            "median": 0.10851175338029861,
+            "mean": 0.10851631486973567,
+            "maximum": 0.11186609417200089
+          },
+          "validation_false_positive_rate": 0.0041928721174004195
+        },
+        "predictive_state": {
+          "threshold": 2600.9646496037403,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 2,
+            "false_negative": 8,
+            "true_negative": 845
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 2,
+            "matched_events": 0,
+            "false_alarm_events": 2,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.02572169779782839
+          },
+          "score_summary": {
+            "minimum": 0.03517620462959577,
+            "median": 1.1847233686990426,
+            "mean": 83.68159243353232,
+            "maximum": 25395.586161967032
+          },
+          "validation_false_positive_rate": 0.006289308176100629
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 477,
+        "validation_samples": 477,
+        "threshold_quantile": 0.995,
+        "threshold": 4.377851263263401,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 855
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1728,
+          "minimum": 0.999,
+          "maximum": 0.999,
+          "constant_reference": true,
+          "constant_reference_center": 0.5
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1728
+          ],
+          "calibration": [
+            1728,
+            2304
+          ],
+          "validation": [
+            2304,
+            2880
+          ]
+        },
+        "fit_windows": 1629,
+        "calibration_windows": 477,
+        "validation_windows": 477,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 855,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8639,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 0.8039993999991566,
+        "neural_batch_scoring": 1.4741317000007257,
+        "predictive_fit_and_scoring": 0.28632870000001276,
+        "wall_including_loading": 0.035288999999465887
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.003786087036133,
+        "last_reconstruction_loss": 0.15717308223247528
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\A-1_445ed9b812d06dc5.npz",
+        "key": "445ed9b812d06dc5"
+      },
+      "existing_ada_comparison": {
+        "point_f1": 0.22222222222222224,
+        "point_adjusted_f1": 0.6666666666666666,
+        "hybrid_minus_existing_point_f1": -0.2035959125598241,
+        "comparison_note": "same sampled endpoints, different normal-only calibration protocol"
+      }
+    },
+    "D-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "D-1",
+      "spacecraft": "SMAP",
+      "role": "prior_comparison",
+      "fusion": {
+        "threshold": 3.9438290348433958,
+        "point": {
+          "precision": 0.5068493150684932,
+          "recall": 0.9107692307692308,
+          "f1": 0.6512651265126513,
+          "true_positive": 296,
+          "false_positive": 288,
+          "false_negative": 29,
+          "true_negative": 228
+        },
+        "event": {
+          "precision": 0.02702702702702703,
+          "recall": 1.0,
+          "f1": 0.052631578947368425,
+          "true_events": 1,
+          "predicted_events": 37,
+          "matched_events": 1,
+          "false_alarm_events": 36,
+          "average_latency": 0.0
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.5301794453507341,
+          "recall": 1.0,
+          "f1": 0.6929637526652452
+        },
+        "ranking": {
+          "average_precision": 0.5020214693780427
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 5.4638318050256105,
+          "mean": 4.2473968530842185,
+          "maximum": 5.4638318050256105
+        },
+        "validation_false_positive_rate": 0.006369426751592357
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.22447240874171254,
+          "point": {
+            "precision": 0.4374079528718704,
+            "recall": 0.9138461538461539,
+            "f1": 0.5916334661354582,
+            "true_positive": 297,
+            "false_positive": 382,
+            "false_negative": 28,
+            "true_negative": 134
+          },
+          "event": {
+            "precision": 0.02631578947368421,
+            "recall": 1.0,
+            "f1": 0.05128205128205127,
+            "true_events": 1,
+            "predicted_events": 38,
+            "matched_events": 1,
+            "false_alarm_events": 37,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.4596888260254597,
+            "recall": 1.0,
+            "f1": 0.6298449612403101
+          },
+          "ranking": {
+            "average_precision": 0.939477394581344
+          },
+          "score_summary": {
+            "minimum": 0.05538669973611832,
+            "median": 0.30284854769706726,
+            "mean": 0.37976848247253936,
+            "maximum": 0.6252163648605347
+          },
+          "validation_false_positive_rate": 0.006369426751592357
+        },
+        "predictive_state": {
+          "threshold": 1791.759544892237,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 1,
+            "false_negative": 325,
+            "true_negative": 515
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 1,
+            "matched_events": 0,
+            "false_alarm_events": 1,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.716933417408582
+          },
+          "score_summary": {
+            "minimum": 0.1909759022564175,
+            "median": 6.164572093392867,
+            "mean": 12.554305443387504,
+            "maximum": 2377.6911044814447
+          },
+          "validation_false_positive_rate": 0.006369426751592357
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 471,
+        "validation_samples": 471,
+        "threshold_quantile": 0.995,
+        "threshold": 3.9438290348433958,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 841
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1709,
+          "minimum": -1.0,
+          "maximum": -0.579,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1709
+          ],
+          "calibration": [
+            1709,
+            2279
+          ],
+          "validation": [
+            2279,
+            2849
+          ]
+        },
+        "fit_windows": 1610,
+        "calibration_windows": 471,
+        "validation_windows": 471,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 841,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8499,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 0.879318900006183,
+        "neural_batch_scoring": 1.5214371000038227,
+        "predictive_fit_and_scoring": 0.3440520000003744,
+        "wall_including_loading": 0.03468720000091707
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.0488104820251465,
+        "last_reconstruction_loss": 0.20439767837524414
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\D-1_b5cb8eee29733af8.npz",
+        "key": "b5cb8eee29733af8"
+      },
+      "existing_ada_comparison": {
+        "point_f1": 0.9120521172638436,
+        "point_adjusted_f1": 0.9863429438543247,
+        "hybrid_minus_existing_point_f1": -0.26078699075119227,
+        "comparison_note": "same sampled endpoints, different normal-only calibration protocol"
+      }
+    },
+    "M-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "M-1",
+      "spacecraft": "MSL",
+      "role": "prior_comparison",
+      "fusion": {
+        "threshold": 4.454347296253507,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 20,
+          "false_negative": 114,
+          "true_negative": 84
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 3,
+          "matched_events": 0,
+          "false_alarm_events": 3,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.4216468739872637
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.27612858998508605,
+          "mean": 0.9916457891223697,
+          "maximum": 5.147494476813453
+        },
+        "validation_false_positive_rate": 0.0029154518950437317
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.3362543642520905,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 32,
+            "false_negative": 114,
+            "true_negative": 72
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 5,
+            "matched_events": 0,
+            "false_alarm_events": 5,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.335000844871675
+          },
+          "score_summary": {
+            "minimum": 0.046963728964328766,
+            "median": 0.2333221286535263,
+            "mean": 0.24436374015490944,
+            "maximum": 0.3936116397380829
+          },
+          "validation_false_positive_rate": 0.0058309037900874635
+        },
+        "predictive_state": {
+          "threshold": 125.1322578926004,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 0,
+            "false_negative": 114,
+            "true_negative": 104
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 0,
+            "matched_events": 0,
+            "false_alarm_events": 0,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.5528485336370351
+          },
+          "score_summary": {
+            "minimum": 0.056753520804330375,
+            "median": 0.4987487283226759,
+            "mean": 1.8365551694461002,
+            "maximum": 92.37943647058607
+          },
+          "validation_false_positive_rate": 0.0058309037900874635
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 343,
+        "validation_samples": 343,
+        "threshold_quantile": 0.995,
+        "threshold": 4.454347296253507,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 218
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1325,
+          "minimum": -0.21670827641433776,
+          "maximum": 1.0000117763436809,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1325
+          ],
+          "calibration": [
+            1325,
+            1767
+          ],
+          "validation": [
+            1767,
+            2209
+          ]
+        },
+        "fit_windows": 1226,
+        "calibration_windows": 343,
+        "validation_windows": 343,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 218,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 2269,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.1581615000031888,
+        "neural_batch_scoring": 0.8821956000028877,
+        "predictive_fit_and_scoring": 0.47305280000000494,
+        "wall_including_loading": 0.027381899999454618
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.137113094329834,
+        "last_reconstruction_loss": 0.3067719042301178
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\M-1_bc321eeebacc995c.npz",
+        "key": "bc321eeebacc995c"
+      },
+      "existing_ada_comparison": {
+        "point_f1": 0.0,
+        "point_adjusted_f1": 0.0,
+        "hybrid_minus_existing_point_f1": 0.0,
+        "comparison_note": "same sampled endpoints, different normal-only calibration protocol"
+      }
+    },
+    "E-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "E-1",
+      "spacecraft": "SMAP",
+      "role": "predeclared_holdout",
+      "fusion": {
+        "threshold": 4.783316371371566,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 10,
+          "false_negative": 50,
+          "true_negative": 782
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 2,
+          "predicted_events": 9,
+          "matched_events": 0,
+          "false_alarm_events": 9,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.1008165419308946
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.5206612916124729,
+          "mean": 1.030268700923159,
+          "maximum": 5.476463551931511
+        },
+        "validation_false_positive_rate": 0.0020964360587002098
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.34597446978092194,
+          "point": {
+            "precision": 0.07142857142857142,
+            "recall": 0.02,
+            "f1": 0.03125,
+            "true_positive": 1,
+            "false_positive": 13,
+            "false_negative": 49,
+            "true_negative": 779
+          },
+          "event": {
+            "precision": 0.07692307692307693,
+            "recall": 0.5,
+            "f1": 0.13333333333333336,
+            "true_events": 2,
+            "predicted_events": 13,
+            "matched_events": 1,
+            "false_alarm_events": 12,
+            "average_latency": 27.0
+          },
+          "point_adjusted": {
+            "precision": 0.7833333333333333,
+            "recall": 0.94,
+            "f1": 0.8545454545454546
+          },
+          "ranking": {
+            "average_precision": 0.10471617725806572
+          },
+          "score_summary": {
+            "minimum": 0.03177494555711746,
+            "median": 0.1891702264547348,
+            "mean": 0.17722833201713914,
+            "maximum": 0.3705051839351654
+          },
+          "validation_false_positive_rate": 0.006289308176100629
+        },
+        "predictive_state": {
+          "threshold": 3187.85891823841,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 3,
+            "false_negative": 50,
+            "true_negative": 789
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 2,
+            "predicted_events": 3,
+            "matched_events": 0,
+            "false_alarm_events": 3,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.13101958031982341
+          },
+          "score_summary": {
+            "minimum": 0.02873072812072773,
+            "median": 4.3189094786704665,
+            "mean": 62.58264831005649,
+            "maximum": 4685.026660403887
+          },
+          "validation_false_positive_rate": 0.006289308176100629
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 477,
+        "validation_samples": 477,
+        "threshold_quantile": 0.995,
+        "threshold": 4.783316371371566,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 842
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1728,
+          "minimum": -1.0,
+          "maximum": 0.9999999999999998,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1728
+          ],
+          "calibration": [
+            1728,
+            2304
+          ],
+          "validation": [
+            2304,
+            2880
+          ]
+        },
+        "fit_windows": 1629,
+        "calibration_windows": 477,
+        "validation_windows": 477,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 842,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8509,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 2.2087584999972023,
+        "neural_batch_scoring": 1.927220199999283,
+        "predictive_fit_and_scoring": 0.3259773999961908,
+        "wall_including_loading": 0.029332300000532996
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.047940731048584,
+        "last_reconstruction_loss": 0.20422154664993286
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\E-1_e84b68f1cb6b5b76.npz",
+        "key": "e84b68f1cb6b5b76"
+      }
+    },
+    "P-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "P-1",
+      "spacecraft": "SMAP",
+      "role": "predeclared_holdout",
+      "fusion": {
+        "threshold": 5.472270673671475,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 75,
+          "true_negative": 766
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 3,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.07633016087409084
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.8472978603872037,
+          "mean": 1.2648908705510296,
+          "maximum": 5.472270673671475
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.172482717782259,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 1,
+            "false_negative": 75,
+            "true_negative": 765
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 3,
+            "predicted_events": 1,
+            "matched_events": 0,
+            "false_alarm_events": 1,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.06179824576863657
+          },
+          "score_summary": {
+            "minimum": 0.020421933382749557,
+            "median": 0.07666253298521042,
+            "mean": 0.07857004866252047,
+            "maximum": 0.1886143535375595
+          },
+          "validation_false_positive_rate": 0.0063025210084033615
+        },
+        "predictive_state": {
+          "threshold": 613.7461711596633,
+          "point": {
+            "precision": 0.5,
+            "recall": 0.02666666666666667,
+            "f1": 0.05063291139240507,
+            "true_positive": 2,
+            "false_positive": 2,
+            "false_negative": 73,
+            "true_negative": 764
+          },
+          "event": {
+            "precision": 0.25,
+            "recall": 0.3333333333333333,
+            "f1": 0.28571428571428575,
+            "true_events": 3,
+            "predicted_events": 4,
+            "matched_events": 1,
+            "false_alarm_events": 3,
+            "average_latency": 9.0
+          },
+          "point_adjusted": {
+            "precision": 0.9393939393939394,
+            "recall": 0.41333333333333333,
+            "f1": 0.5740740740740741
+          },
+          "ranking": {
+            "average_precision": 0.13852715023766476
+          },
+          "score_summary": {
+            "minimum": 0.029874502503718547,
+            "median": 0.807238716169211,
+            "mean": 62.32592736403182,
+            "maximum": 40760.75785822062
+          },
+          "validation_false_positive_rate": 0.0063025210084033615
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 475,
+        "validation_samples": 476,
+        "threshold_quantile": 0.995,
+        "threshold": 5.472270673671475,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 841
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1723,
+          "minimum": -1.0,
+          "maximum": 0.9001447406246701,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1723
+          ],
+          "calibration": [
+            1723,
+            2297
+          ],
+          "validation": [
+            2297,
+            2872
+          ]
+        },
+        "fit_windows": 1624,
+        "calibration_windows": 475,
+        "validation_windows": 476,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 841,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8499,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.7380713000020478,
+        "neural_batch_scoring": 1.6740217000042321,
+        "predictive_fit_and_scoring": 0.4763424999982817,
+        "wall_including_loading": 0.03349280000111321
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 4.939168930053711,
+        "last_reconstruction_loss": 0.09380576014518738
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\P-1_7dafca4bdd32e195.npz",
+        "key": "7dafca4bdd32e195"
+      }
+    },
+    "M-6": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "M-6",
+      "spacecraft": "MSL",
+      "role": "predeclared_holdout",
+      "fusion": {
+        "threshold": 3.068052935133617,
+        "point": {
+          "precision": 0.17475728155339806,
+          "recall": 1.0,
+          "f1": 0.2975206611570248,
+          "true_positive": 18,
+          "false_positive": 85,
+          "false_negative": 0,
+          "true_negative": 92
+        },
+        "event": {
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4,
+          "true_events": 1,
+          "predicted_events": 4,
+          "matched_events": 1,
+          "false_alarm_events": 3,
+          "average_latency": 0.0
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.17475728155339806,
+          "recall": 1.0,
+          "f1": 0.2975206611570248
+        },
+        "ranking": {
+          "average_precision": 0.17475728155339806
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 4.677490847567718,
+          "mean": 2.669290389775818,
+          "maximum": 4.677490847567718
+        },
+        "validation_false_positive_rate": 0.004672897196261682
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.044260146766901015,
+          "point": {
+            "precision": 0.17475728155339806,
+            "recall": 1.0,
+            "f1": 0.2975206611570248,
+            "true_positive": 18,
+            "false_positive": 85,
+            "false_negative": 0,
+            "true_negative": 92
+          },
+          "event": {
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "true_events": 1,
+            "predicted_events": 4,
+            "matched_events": 1,
+            "false_alarm_events": 3,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.17475728155339806,
+            "recall": 1.0,
+            "f1": 0.2975206611570248
+          },
+          "ranking": {
+            "average_precision": 0.18327664058370874
+          },
+          "score_summary": {
+            "minimum": 0.044211823493242264,
+            "median": 0.17697548866271973,
+            "mean": 0.22594140091767678,
+            "maximum": 0.41070756316185
+          },
+          "validation_false_positive_rate": 0.009345794392523364
+        },
+        "predictive_state": {
+          "threshold": 28.488020320273847,
+          "point": {
+            "precision": 0.4,
+            "recall": 0.1111111111111111,
+            "f1": 0.1739130434782609,
+            "true_positive": 2,
+            "false_positive": 3,
+            "false_negative": 16,
+            "true_negative": 174
+          },
+          "event": {
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "true_events": 1,
+            "predicted_events": 5,
+            "matched_events": 1,
+            "false_alarm_events": 4,
+            "average_latency": 14.0
+          },
+          "point_adjusted": {
+            "precision": 0.8571428571428571,
+            "recall": 1.0,
+            "f1": 0.923076923076923
+          },
+          "ranking": {
+            "average_precision": 0.1465360653737139
+          },
+          "score_summary": {
+            "minimum": 0.07822463620166115,
+            "median": 0.30316191230504813,
+            "mean": 141.18638015388416,
+            "maximum": 9091.150892866655
+          },
+          "validation_false_positive_rate": 0.009345794392523364
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 214,
+        "validation_samples": 214,
+        "threshold_quantile": 0.995,
+        "threshold": 3.068052935133617,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 195
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 939,
+          "minimum": -1.0,
+          "maximum": -1.0,
+          "constant_reference": true,
+          "constant_reference_center": 0.5
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            939
+          ],
+          "calibration": [
+            939,
+            1252
+          ],
+          "validation": [
+            1252,
+            1565
+          ]
+        },
+        "fit_windows": 840,
+        "calibration_windows": 214,
+        "validation_windows": 214,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 195,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 2039,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 0.9920614000002388,
+        "neural_batch_scoring": 1.8454863000006299,
+        "predictive_fit_and_scoring": 0.4785496000040439,
+        "wall_including_loading": 0.031994099997973535
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 4.924996852874756,
+        "last_reconstruction_loss": 0.08053813129663467
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\M-6_880e862623bd7612.npz",
+        "key": "880e862623bd7612"
+      }
+    },
+    "A-5": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "A-5",
+      "spacecraft": "SMAP",
+      "role": "mahalanobis_predeclared_validation",
+      "fusion": {
+        "threshold": 3.068052935133617,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 5,
+          "true_negative": 455
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.010869565217391304
+        },
+        "score_summary": {
+          "minimum": 3.068052935133617,
+          "median": 3.068052935133617,
+          "mean": 3.0680529351336165,
+          "maximum": 3.068052935133617
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.007684544825460762,
+          "point": {
+            "precision": 0.010869565217391304,
+            "recall": 1.0,
+            "f1": 0.02150537634408602,
+            "true_positive": 5,
+            "false_positive": 455,
+            "false_negative": 0,
+            "true_negative": 0
+          },
+          "event": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "true_events": 1,
+            "predicted_events": 1,
+            "matched_events": 1,
+            "false_alarm_events": 0,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.010869565217391304,
+            "recall": 1.0,
+            "f1": 0.02150537634408602
+          },
+          "ranking": {
+            "average_precision": 0.011726751043571144
+          },
+          "score_summary": {
+            "minimum": 0.05379191040992737,
+            "median": 0.07332032173871994,
+            "mean": 0.359229093854842,
+            "maximum": 0.7827611565589905
+          },
+          "validation_false_positive_rate": 0.023809523809523808
+        },
+        "predictive_state": {
+          "threshold": 647.3455613115303,
+          "point": {
+            "precision": 1.0,
+            "recall": 0.2,
+            "f1": 0.33333333333333337,
+            "true_positive": 1,
+            "false_positive": 0,
+            "false_negative": 4,
+            "true_negative": 455
+          },
+          "event": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "true_events": 1,
+            "predicted_events": 1,
+            "matched_events": 1,
+            "false_alarm_events": 0,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "ranking": {
+            "average_precision": 0.21148312552330334
+          },
+          "score_summary": {
+            "minimum": 2.68249351280207,
+            "median": 40.41999908006079,
+            "mean": 54.19024016427723,
+            "maximum": 735.4628682985547
+          },
+          "validation_false_positive_rate": 0.023809523809523808
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 42,
+        "validation_samples": 42,
+        "threshold_quantile": 0.995,
+        "threshold": 3.068052935133617,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 460
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 423,
+          "minimum": -0.9998064516129033,
+          "maximum": -0.9990000000000001,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            423
+          ],
+          "calibration": [
+            423,
+            564
+          ],
+          "validation": [
+            564,
+            705
+          ]
+        },
+        "fit_windows": 324,
+        "calibration_windows": 42,
+        "validation_windows": 42,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": false
+        },
+        "evaluation_windows": 460,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 4689,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 2.640749300000607,
+        "neural_batch_scoring": 0.9156058000007761,
+        "predictive_fit_and_scoring": 0.08198249999986729,
+        "wall_including_loading": 0.02401780000218423
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 4.864421367645264,
+        "last_reconstruction_loss": 0.01989031955599785
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\A-5_c7a675b93422256d.npz",
+        "key": "c7a675b93422256d"
+      }
+    },
+    "E-12": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "E-12",
+      "spacecraft": "SMAP",
+      "role": "mahalanobis_predeclared_validation",
+      "fusion": {
+        "threshold": 5.213067623318735,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 13,
+          "false_negative": 58,
+          "true_negative": 771
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 2,
+          "predicted_events": 11,
+          "matched_events": 0,
+          "false_alarm_events": 11,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.0592866136020212
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.5206364943302499,
+          "mean": 0.9468058985934388,
+          "maximum": 5.476463551931511
+        },
+        "validation_false_positive_rate": 0.006289308176100629
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.346591574549675,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 17,
+            "false_negative": 58,
+            "true_negative": 767
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 2,
+            "predicted_events": 14,
+            "matched_events": 0,
+            "false_alarm_events": 14,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.04196748403766842
+          },
+          "score_summary": {
+            "minimum": 0.018753625452518463,
+            "median": 0.18633461743593216,
+            "mean": 0.17044133227539743,
+            "maximum": 0.3693428337574005
+          },
+          "validation_false_positive_rate": 0.006289308176100629
+        },
+        "predictive_state": {
+          "threshold": 5774.294122369452,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 1,
+            "false_negative": 58,
+            "true_negative": 783
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 2,
+            "predicted_events": 1,
+            "matched_events": 0,
+            "false_alarm_events": 1,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.08409523649371864
+          },
+          "score_summary": {
+            "minimum": 0.03918979654538785,
+            "median": 4.152107223032498,
+            "mean": 62.778846579687354,
+            "maximum": 8441.941306653105
+          },
+          "validation_false_positive_rate": 0.006289308176100629
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 477,
+        "validation_samples": 477,
+        "threshold_quantile": 0.995,
+        "threshold": 5.213067623318735,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 842
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1728,
+          "minimum": -1.0,
+          "maximum": 1.0000000000000002,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1728
+          ],
+          "calibration": [
+            1728,
+            2304
+          ],
+          "validation": [
+            2304,
+            2880
+          ]
+        },
+        "fit_windows": 1629,
+        "calibration_windows": 477,
+        "validation_windows": 477,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 842,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8509,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.2061780000003637,
+        "neural_batch_scoring": 2.264326800002891,
+        "predictive_fit_and_scoring": 0.38137060000008205,
+        "wall_including_loading": 0.030063099999097176
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.047801494598389,
+        "last_reconstruction_loss": 0.20410099625587463
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\E-12_53d7fed331f26a21.npz",
+        "key": "53d7fed331f26a21"
+      }
+    },
+    "S-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "S-1",
+      "spacecraft": "SMAP",
+      "role": "mahalanobis_predeclared_validation",
+      "fusion": {
+        "threshold": 5.4510384535657,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 44,
+          "true_negative": 680
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.1486644685721418
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.06884224540092629,
+          "mean": 0.5001096253384657,
+          "maximum": 5.4510384535657
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.16596920132637025,
+          "point": {
+            "precision": 0.75,
+            "recall": 0.06818181818181818,
+            "f1": 0.125,
+            "true_positive": 3,
+            "false_positive": 1,
+            "false_negative": 41,
+            "true_negative": 679
+          },
+          "event": {
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "true_events": 1,
+            "predicted_events": 4,
+            "matched_events": 1,
+            "false_alarm_events": 3,
+            "average_latency": 29.0
+          },
+          "point_adjusted": {
+            "precision": 0.9777777777777777,
+            "recall": 1.0,
+            "f1": 0.9887640449438202
+          },
+          "ranking": {
+            "average_precision": 0.15710421247252512
+          },
+          "score_summary": {
+            "minimum": 0.030658995732665062,
+            "median": 0.1087430864572525,
+            "mean": 0.10925987273331175,
+            "maximum": 0.18945923447608948
+          },
+          "validation_false_positive_rate": 0.0064516129032258064
+        },
+        "predictive_state": {
+          "threshold": 2184.3427267409616,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 2,
+            "false_negative": 44,
+            "true_negative": 678
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 2,
+            "matched_events": 0,
+            "false_alarm_events": 2,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.07562909840069858
+          },
+          "score_summary": {
+            "minimum": 0.06684697805529353,
+            "median": 1.0221843186143207,
+            "mean": 18.23587085958871,
+            "maximum": 3239.2493016456783
+          },
+          "validation_false_positive_rate": 0.0064516129032258064
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 465,
+        "validation_samples": 465,
+        "threshold_quantile": 0.995,
+        "threshold": 5.4510384535657,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 724
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1690,
+          "minimum": -0.39912347129689585,
+          "maximum": 1.0,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1690
+          ],
+          "calibration": [
+            1690,
+            2254
+          ],
+          "validation": [
+            2254,
+            2818
+          ]
+        },
+        "fit_windows": 1591,
+        "calibration_windows": 465,
+        "validation_windows": 465,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 724,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 7329,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.0274864999955753,
+        "neural_batch_scoring": 1.5611520000020391,
+        "predictive_fit_and_scoring": 0.2926471999962814,
+        "wall_including_loading": 0.03545979999762494
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 4.973935604095459,
+        "last_reconstruction_loss": 0.12866857647895813
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\S-1_89d7c9a94070152d.npz",
+        "key": "89d7c9a94070152d"
+      }
+    },
+    "T-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "T-1",
+      "spacecraft": "SMAP",
+      "role": "mahalanobis_predeclared_validation",
+      "fusion": {
+        "threshold": 5.474369310328396,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 153,
+          "true_negative": 699
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 2,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.2957901413431798
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.16363247210689988,
+          "mean": 0.6045113972961391,
+          "maximum": 5.474369310328396
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.5537370219826698,
+          "point": {
+            "precision": 1.0,
+            "recall": 0.013071895424836602,
+            "f1": 0.02580645161290323,
+            "true_positive": 2,
+            "false_positive": 0,
+            "false_negative": 151,
+            "true_negative": 699
+          },
+          "event": {
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5,
+            "true_events": 2,
+            "predicted_events": 2,
+            "matched_events": 1,
+            "false_alarm_events": 1,
+            "average_latency": 63.0
+          },
+          "point_adjusted": {
+            "precision": 1.0,
+            "recall": 0.9803921568627451,
+            "f1": 0.99009900990099
+          },
+          "ranking": {
+            "average_precision": 0.48968614676008165
+          },
+          "score_summary": {
+            "minimum": 0.28687745332717896,
+            "median": 0.3578662574291229,
+            "mean": 0.36923215181474955,
+            "maximum": 0.554925799369812
+          },
+          "validation_false_positive_rate": 0.0063025210084033615
+        },
+        "predictive_state": {
+          "threshold": 5.373156216930748,
+          "point": {
+            "precision": 0.14285714285714285,
+            "recall": 0.006535947712418301,
+            "f1": 0.012499999999999999,
+            "true_positive": 1,
+            "false_positive": 6,
+            "false_negative": 152,
+            "true_negative": 693
+          },
+          "event": {
+            "precision": 0.2,
+            "recall": 0.5,
+            "f1": 0.28571428571428575,
+            "true_events": 2,
+            "predicted_events": 5,
+            "matched_events": 1,
+            "false_alarm_events": 4,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.3333333333333333,
+            "recall": 0.0196078431372549,
+            "f1": 0.037037037037037035
+          },
+          "ranking": {
+            "average_precision": 0.18385645098447848
+          },
+          "score_summary": {
+            "minimum": 0.0020641475259605764,
+            "median": 0.40955569496940614,
+            "mean": 447.0855138474381,
+            "maximum": 120002.16489554677
+          },
+          "validation_false_positive_rate": 0.0063025210084033615
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 476,
+        "validation_samples": 476,
+        "threshold_quantile": 0.995,
+        "threshold": 5.474369310328396,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 852
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1725,
+          "minimum": -0.9964312240661193,
+          "maximum": 1.0,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1725
+          ],
+          "calibration": [
+            1725,
+            2300
+          ],
+          "validation": [
+            2300,
+            2875
+          ]
+        },
+        "fit_windows": 1626,
+        "calibration_windows": 476,
+        "validation_windows": 476,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 852,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8609,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.0455141000056756,
+        "neural_batch_scoring": 1.6702533999996376,
+        "predictive_fit_and_scoring": 0.2985415000002831,
+        "wall_including_loading": 0.03606030000082683
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.351978302001953,
+        "last_reconstruction_loss": 0.5061115026473999
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\T-1_5e0f98be559da33f.npz",
+        "key": "5e0f98be559da33f"
+      }
+    },
+    "A-2": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "A-2",
+      "spacecraft": "SMAP",
+      "role": "upper_tail_predeclared_validation",
+      "fusion": {
+        "threshold": 5.375278407684165,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 11,
+          "true_negative": 771
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.014710560192471946
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.09716374845364774,
+          "mean": 0.63772798641446,
+          "maximum": 5.375278407684165
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.28074782192707065,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 0,
+            "false_negative": 11,
+            "true_negative": 771
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 0,
+            "matched_events": 0,
+            "false_alarm_events": 0,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.009880871742727837
+          },
+          "score_summary": {
+            "minimum": 0.03724095597863197,
+            "median": 0.1630016714334488,
+            "mean": 0.15118546401867478,
+            "maximum": 0.2505215108394623
+          },
+          "validation_false_positive_rate": 0.0069605568445475635
+        },
+        "predictive_state": {
+          "threshold": 428.76876483037717,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 11,
+            "false_negative": 11,
+            "true_negative": 760
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 8,
+            "matched_events": 0,
+            "false_alarm_events": 8,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.014478328116191845
+          },
+          "score_summary": {
+            "minimum": 0.040921204729949326,
+            "median": 1.5165286186635554,
+            "mean": 31.594309258027984,
+            "maximum": 4375.763465838936
+          },
+          "validation_false_positive_rate": 0.0069605568445475635
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 431,
+        "validation_samples": 431,
+        "threshold_quantile": 0.995,
+        "threshold": 5.375278407684165,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 782
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1588,
+          "minimum": -1.0,
+          "maximum": 1.0,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1588
+          ],
+          "calibration": [
+            1588,
+            2118
+          ],
+          "validation": [
+            2118,
+            2648
+          ]
+        },
+        "fit_windows": 1489,
+        "calibration_windows": 431,
+        "validation_windows": 431,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 782,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 7909,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.059964599997329,
+        "neural_batch_scoring": 1.5862992000038503,
+        "predictive_fit_and_scoring": 0.3266256000060821,
+        "wall_including_loading": 0.036598599996068515
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.088719367980957,
+        "last_reconstruction_loss": 0.2432677149772644
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\A-2_7b67b12eb5711a84.npz",
+        "key": "7b67b12eb5711a84"
+      }
+    },
+    "B-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "B-1",
+      "spacecraft": "SMAP",
+      "role": "upper_tail_predeclared_validation",
+      "fusion": {
+        "threshold": 3.6609942506244004,
+        "point": {
+          "precision": 0.017391304347826087,
+          "recall": 0.8571428571428571,
+          "f1": 0.03409090909090909,
+          "true_positive": 6,
+          "false_positive": 339,
+          "false_negative": 1,
+          "true_negative": 449
+        },
+        "event": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "true_events": 1,
+          "predicted_events": 2,
+          "matched_events": 1,
+          "false_alarm_events": 1,
+          "average_latency": 1.0
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.02023121387283237,
+          "recall": 1.0,
+          "f1": 0.039660056657223795
+        },
+        "ranking": {
+          "average_precision": 0.01616469393335677
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.0,
+          "mean": 2.3147988198225526,
+          "maximum": 5.270432163058501
+        },
+        "validation_false_positive_rate": 0.002577319587628866
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.10825907438993454,
+          "point": {
+            "precision": 0.020066889632107024,
+            "recall": 0.8571428571428571,
+            "f1": 0.03921568627450981,
+            "true_positive": 6,
+            "false_positive": 293,
+            "false_negative": 1,
+            "true_negative": 495
+          },
+          "event": {
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "true_events": 1,
+            "predicted_events": 3,
+            "matched_events": 1,
+            "false_alarm_events": 2,
+            "average_latency": 1.0
+          },
+          "point_adjusted": {
+            "precision": 0.023333333333333334,
+            "recall": 1.0,
+            "f1": 0.04560260586319218
+          },
+          "ranking": {
+            "average_precision": 0.011427308656032486
+          },
+          "score_summary": {
+            "minimum": 0.10825421661138535,
+            "median": 0.10825905948877335,
+            "mean": 0.30009472342969484,
+            "maximum": 0.6340765357017517
+          },
+          "validation_false_positive_rate": 0.0
+        },
+        "predictive_state": {
+          "threshold": 1.7216406846506683e-34,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 48,
+            "false_negative": 7,
+            "true_negative": 740
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 1,
+            "matched_events": 0,
+            "false_alarm_events": 1,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.00880503144654088
+          },
+          "score_summary": {
+            "minimum": 0.0,
+            "median": 0.0,
+            "mean": 25.23182940238446,
+            "maximum": 20002.47907586857
+          },
+          "validation_false_positive_rate": 0.002577319587628866
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 388,
+        "validation_samples": 388,
+        "threshold_quantile": 0.995,
+        "threshold": 3.6609942506244004,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 795
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1461,
+          "minimum": -1.0,
+          "maximum": -1.0,
+          "constant_reference": true,
+          "constant_reference_center": 0.5
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1461
+          ],
+          "calibration": [
+            1461,
+            1948
+          ],
+          "validation": [
+            1948,
+            2435
+          ]
+        },
+        "fit_windows": 1362,
+        "calibration_windows": 388,
+        "validation_windows": 388,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 795,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8039,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 0.9833266999994521,
+        "neural_batch_scoring": 1.5341556999992463,
+        "predictive_fit_and_scoring": 0.2946477999939816,
+        "wall_including_loading": 0.03670740000234218
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.003222942352295,
+        "last_reconstruction_loss": 0.15716524422168732
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\B-1_61e0726d8cdce524.npz",
+        "key": "61e0726d8cdce524"
+      }
+    },
+    "C-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "C-1",
+      "spacecraft": "MSL",
+      "role": "upper_tail_predeclared_validation",
+      "fusion": {
+        "threshold": 5.117993812416755,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 31,
+          "true_negative": 186
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 2,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.19136904738167768
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 2.920769235080536,
+          "mean": 2.9788084524760863,
+          "maximum": 5.117993812416755
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.054712307602167116,
+          "point": {
+            "precision": 0.26666666666666666,
+            "recall": 0.25806451612903225,
+            "f1": 0.26229508196721313,
+            "true_positive": 8,
+            "false_positive": 22,
+            "false_negative": 23,
+            "true_negative": 164
+          },
+          "event": {
+            "precision": 0.2,
+            "recall": 0.5,
+            "f1": 0.28571428571428575,
+            "true_events": 2,
+            "predicted_events": 5,
+            "matched_events": 1,
+            "false_alarm_events": 4,
+            "average_latency": 2.0
+          },
+          "point_adjusted": {
+            "precision": 0.47619047619047616,
+            "recall": 0.6451612903225806,
+            "f1": 0.547945205479452
+          },
+          "ranking": {
+            "average_precision": 0.28763153486692605
+          },
+          "score_summary": {
+            "minimum": 0.005707114469259977,
+            "median": 0.012923956848680973,
+            "mean": 0.02542538032545129,
+            "maximum": 0.09792792052030563
+          },
+          "validation_false_positive_rate": 0.006006006006006006
+        },
+        "predictive_state": {
+          "threshold": 28.997027069147467,
+          "point": {
+            "precision": 0.1875,
+            "recall": 0.0967741935483871,
+            "f1": 0.12765957446808507,
+            "true_positive": 3,
+            "false_positive": 13,
+            "false_negative": 28,
+            "true_negative": 173
+          },
+          "event": {
+            "precision": 0.0625,
+            "recall": 0.5,
+            "f1": 0.1111111111111111,
+            "true_events": 2,
+            "predicted_events": 16,
+            "matched_events": 1,
+            "false_alarm_events": 15,
+            "average_latency": 0.0
+          },
+          "point_adjusted": {
+            "precision": 0.6060606060606061,
+            "recall": 0.6451612903225806,
+            "f1": 0.625
+          },
+          "ranking": {
+            "average_precision": 0.2179801305353002
+          },
+          "score_summary": {
+            "minimum": 0.03768167690802707,
+            "median": 0.44377617991426455,
+            "mean": 549.9166899669751,
+            "maximum": 9106.682527110583
+          },
+          "validation_false_positive_rate": 0.006006006006006006
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 333,
+        "validation_samples": 333,
+        "threshold_quantile": 0.995,
+        "threshold": 5.117993812416755,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 217
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1294,
+          "minimum": -1.0,
+          "maximum": 2.1934477379095165,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1294
+          ],
+          "calibration": [
+            1294,
+            1726
+          ],
+          "validation": [
+            1726,
+            2158
+          ]
+        },
+        "fit_windows": 1195,
+        "calibration_windows": 333,
+        "validation_windows": 333,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 217,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 2259,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.2820212000005995,
+        "neural_batch_scoring": 1.0165586000002804,
+        "predictive_fit_and_scoring": 0.4162999000036507,
+        "wall_including_loading": 0.026610300003085285
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 4.869109630584717,
+        "last_reconstruction_loss": 0.02770734205842018
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\C-1_8443d21cd69b3f88.npz",
+        "key": "8443d21cd69b3f88"
+      }
+    },
+    "D-2": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "D-2",
+      "spacecraft": "SMAP",
+      "role": "upper_tail_predeclared_validation",
+      "fusion": {
+        "threshold": 4.09016919081162,
+        "point": {
+          "precision": 0.9796437659033079,
+          "recall": 0.9123222748815166,
+          "f1": 0.9447852760736197,
+          "true_positive": 385,
+          "false_positive": 8,
+          "false_negative": 37,
+          "true_negative": 420
+        },
+        "event": {
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1": 0.5,
+          "true_events": 1,
+          "predicted_events": 3,
+          "matched_events": 1,
+          "false_alarm_events": 2,
+          "average_latency": 37.0
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.9813953488372092,
+          "recall": 1.0,
+          "f1": 0.9906103286384975
+        },
+        "ranking": {
+          "average_precision": 0.9469025193161541
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 1.8543497941298357,
+          "mean": 2.723740882616089,
+          "maximum": 5.476463551931511
+        },
+        "validation_false_positive_rate": 0.0041928721174004195
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.10784834623336792,
+          "point": {
+            "precision": 0.9846153846153847,
+            "recall": 0.909952606635071,
+            "f1": 0.9458128078817734,
+            "true_positive": 384,
+            "false_positive": 6,
+            "false_negative": 38,
+            "true_negative": 422
+          },
+          "event": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "true_events": 1,
+            "predicted_events": 1,
+            "matched_events": 1,
+            "false_alarm_events": 0,
+            "average_latency": 38.0
+          },
+          "point_adjusted": {
+            "precision": 0.985981308411215,
+            "recall": 1.0,
+            "f1": 0.9929411764705882
+          },
+          "ranking": {
+            "average_precision": 0.9604749548246684
+          },
+          "score_summary": {
+            "minimum": 0.10769537836313248,
+            "median": 0.10776069760322571,
+            "mean": 0.34264588838114457,
+            "maximum": 0.632622480392456
+          },
+          "validation_false_positive_rate": 0.0020964360587002098
+        },
+        "predictive_state": {
+          "threshold": 1481.4725728585202,
+          "point": {
+            "precision": 0.3333333333333333,
+            "recall": 0.002369668246445498,
+            "f1": 0.004705882352941176,
+            "true_positive": 1,
+            "false_positive": 2,
+            "false_negative": 421,
+            "true_negative": 426
+          },
+          "event": {
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "true_events": 1,
+            "predicted_events": 3,
+            "matched_events": 1,
+            "false_alarm_events": 2,
+            "average_latency": 37.0
+          },
+          "point_adjusted": {
+            "precision": 0.9952830188679245,
+            "recall": 1.0,
+            "f1": 0.9976359338061466
+          },
+          "ranking": {
+            "average_precision": 0.48167232988250225
+          },
+          "score_summary": {
+            "minimum": 0.02746605969876472,
+            "median": 0.8581622863545291,
+            "mean": 77.7261662889837,
+            "maximum": 22817.844703391518
+          },
+          "validation_false_positive_rate": 0.006289308176100629
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 477,
+        "validation_samples": 477,
+        "threshold_quantile": 0.995,
+        "threshold": 4.09016919081162,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 850
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1728,
+          "minimum": -1.0,
+          "maximum": -1.0,
+          "constant_reference": true,
+          "constant_reference_center": 0.5
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1728
+          ],
+          "calibration": [
+            1728,
+            2304
+          ],
+          "validation": [
+            2304,
+            2880
+          ]
+        },
+        "fit_windows": 1629,
+        "calibration_windows": 477,
+        "validation_windows": 477,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 850,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8589,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.279815800000506,
+        "neural_batch_scoring": 1.5779173000046285,
+        "predictive_fit_and_scoring": 0.30259970000042813,
+        "wall_including_loading": 0.03117979999660747
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.002326488494873,
+        "last_reconstruction_loss": 0.1567283570766449
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\D-2_95c0dd58da23bd81.npz",
+        "key": "95c0dd58da23bd81"
+      }
+    },
+    "F-1": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "F-1",
+      "spacecraft": "SMAP",
+      "role": "upper_tail_predeclared_validation",
+      "fusion": {
+        "threshold": 4.77912349311153,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 7,
+          "false_negative": 10,
+          "true_negative": 832
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 1,
+          "matched_events": 0,
+          "false_alarm_events": 1,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.010943940428123366
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 0.42241466642193765,
+          "mean": 0.5908012811957823,
+          "maximum": 5.472270673671475
+        },
+        "validation_false_positive_rate": 0.004210526315789474
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.04844580709934234,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 10,
+            "false_negative": 10,
+            "true_negative": 829
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 3,
+            "matched_events": 0,
+            "false_alarm_events": 3,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.012735651055340684
+          },
+          "score_summary": {
+            "minimum": 0.014837889932096004,
+            "median": 0.03037773258984089,
+            "mean": 0.030146312880142207,
+            "maximum": 0.08645167946815491
+          },
+          "validation_false_positive_rate": 0.00631578947368421
+        },
+        "predictive_state": {
+          "threshold": 2196.031513087295,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 0,
+            "false_negative": 10,
+            "true_negative": 839
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 0,
+            "matched_events": 0,
+            "false_alarm_events": 0,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.013418937137144546
+          },
+          "score_summary": {
+            "minimum": 0.05863150878954101,
+            "median": 1.2471532314403646,
+            "mean": 4.889979289073953,
+            "maximum": 381.5611188584078
+          },
+          "validation_false_positive_rate": 0.00631578947368421
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 475,
+        "validation_samples": 475,
+        "threshold_quantile": 0.995,
+        "threshold": 4.77912349311153,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 849
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1721,
+          "minimum": -0.34,
+          "maximum": 1.0,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1721
+          ],
+          "calibration": [
+            1721,
+            2295
+          ],
+          "validation": [
+            2295,
+            2869
+          ]
+        },
+        "fit_windows": 1622,
+        "calibration_windows": 475,
+        "validation_windows": 475,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 849,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 8579,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.0719604999976582,
+        "neural_batch_scoring": 1.5337501000030898,
+        "predictive_fit_and_scoring": 0.31509899999946356,
+        "wall_including_loading": 0.03900649999559391
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 4.878759384155273,
+        "last_reconstruction_loss": 0.03371073678135872
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\F-1_7284f72967d901f5.npz",
+        "key": "7284f72967d901f5"
+      }
+    },
+    "M-2": {
+      "dataset": "NASA SMAP/MSL",
+      "channel": "M-2",
+      "spacecraft": "MSL",
+      "role": "upper_tail_predeclared_validation",
+      "fusion": {
+        "threshold": 5.147494476813453,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 114,
+          "true_negative": 104
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.8108755767020751
+        },
+        "score_summary": {
+          "minimum": -0.0,
+          "median": 5.147494476813453,
+          "mean": 3.210688446969778,
+          "maximum": 5.147494476813453
+        },
+        "validation_false_positive_rate": 0.0
+      },
+      "components": {
+        "neural_reconstruction": {
+          "threshold": 0.34085976511240007,
+          "point": {
+            "precision": 0.84375,
+            "recall": 0.7105263157894737,
+            "f1": 0.7714285714285714,
+            "true_positive": 81,
+            "false_positive": 15,
+            "false_negative": 33,
+            "true_negative": 89
+          },
+          "event": {
+            "precision": 0.05555555555555555,
+            "recall": 1.0,
+            "f1": 0.10526315789473684,
+            "true_events": 1,
+            "predicted_events": 18,
+            "matched_events": 1,
+            "false_alarm_events": 17,
+            "average_latency": 12.0
+          },
+          "point_adjusted": {
+            "precision": 0.8837209302325582,
+            "recall": 1.0,
+            "f1": 0.9382716049382717
+          },
+          "ranking": {
+            "average_precision": 0.8546735460764912
+          },
+          "score_summary": {
+            "minimum": 0.09946656227111816,
+            "median": 0.33401621878147125,
+            "mean": 0.27132521713272145,
+            "maximum": 0.39828380942344666
+          },
+          "validation_false_positive_rate": 0.0058309037900874635
+        },
+        "predictive_state": {
+          "threshold": 130.49270089233661,
+          "point": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_positive": 0,
+            "false_positive": 0,
+            "false_negative": 114,
+            "true_negative": 104
+          },
+          "event": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "true_events": 1,
+            "predicted_events": 0,
+            "matched_events": 0,
+            "false_alarm_events": 0,
+            "average_latency": null
+          },
+          "point_adjusted": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ranking": {
+            "average_precision": 0.6071427075787782
+          },
+          "score_summary": {
+            "minimum": 0.07719134334516167,
+            "median": 0.8311566501292104,
+            "mean": 2.252262321483169,
+            "maximum": 94.41069702139625
+          },
+          "validation_false_positive_rate": 0.0058309037900874635
+        }
+      },
+      "protocol": {
+        "method": "empirical_upper_tail_bonferroni_min_p",
+        "components": [
+          "neural_reconstruction",
+          "predictive_state"
+        ],
+        "calibration_samples": 343,
+        "validation_samples": 343,
+        "threshold_quantile": 0.995,
+        "threshold": 5.147494476813453,
+        "normal_only_calibration": true,
+        "normal_only_validation_threshold": true,
+        "test_labels_used_for_threshold": false,
+        "evaluation_samples": 218
+      },
+      "protocol_details": {
+        "window_size": 100,
+        "sample_step": 10,
+        "evaluation_grain": "rolling_window_endpoint",
+        "normal_raw_split_fractions": [
+          0.6,
+          0.2,
+          0.2
+        ],
+        "normalization": {
+          "method": "fit_reference_minmax",
+          "reference_fraction": 0.6,
+          "reference_rows": 1324,
+          "minimum": -1.210726170949998,
+          "maximum": -0.6817589696800275,
+          "constant_reference": false,
+          "constant_reference_center": null
+        },
+        "normal_raw_segment_bounds": {
+          "fit": [
+            0,
+            1324
+          ],
+          "calibration": [
+            1324,
+            1766
+          ],
+          "validation": [
+            1766,
+            2208
+          ]
+        },
+        "fit_windows": 1225,
+        "calibration_windows": 343,
+        "validation_windows": 343,
+        "calibration_reliability": {
+          "minimum_windows": 200,
+          "sufficient": true
+        },
+        "evaluation_windows": 218,
+        "first_evaluation_endpoint": 99,
+        "last_evaluation_endpoint": 2269,
+        "test_labels_used_for_training": false,
+        "test_labels_used_for_score_fusion": false,
+        "test_labels_used_for_threshold": false,
+        "test_labels_used_for_metrics_only": true,
+        "point_adjusted_scope": "diagnostic_on_sampled_label_stream",
+        "event_metric_scope": "sampled_label_stream_internal_regression"
+      },
+      "runtime_seconds": {
+        "neural_training": 1.1798819999967236,
+        "neural_batch_scoring": 0.8083642999990843,
+        "predictive_fit_and_scoring": 0.5231457999980194,
+        "wall_including_loading": 0.03325240000413032
+      },
+      "training": {
+        "seed": 42,
+        "epochs": 1,
+        "max_batches_per_epoch": 3,
+        "processed_batches": 3,
+        "last_total_loss": 5.030509948730469,
+        "last_reconstruction_loss": 0.18616031110286713
+      },
+      "cache": {
+        "hit": true,
+        "path": "results\\cache\\nasa_hybrid\\M-2_299e62e4243ff17b.npz",
+        "key": "299e62e4243ff17b"
+      }
+    }
+  },
+  "summary": {
+    "all": {
+      "channels": [
+        "A-1",
+        "D-1",
+        "M-1",
+        "E-1",
+        "P-1",
+        "M-6",
+        "A-5",
+        "E-12",
+        "S-1",
+        "T-1",
+        "A-2",
+        "B-1",
+        "C-1",
+        "D-2",
+        "F-1",
+        "M-2"
+      ],
+      "hybrid": {
+        "average_precision": 0.23690938496657266,
+        "average_point_f1": 0.12164301765603769,
+        "average_point_adjusted_f1": 0.12746131929877433
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.2793781443758826,
+        "average_point_f1": 0.19563090077899611,
+        "average_point_adjusted_f1": 0.39535415065909923
+      },
+      "predictive_state": {
+        "average_precision": 0.22563423880458153,
+        "average_point_f1": 0.04392154656406409,
+        "average_point_adjusted_f1": 0.2598014979996363
+      },
+      "hybrid_minus_neural_point_f1": -0.07398788312295843,
+      "hybrid_minus_predictive_point_f1": 0.0777214710919736,
+      "existing_ada_comparable_channels": [
+        "A-1",
+        "D-1",
+        "M-1"
+      ],
+      "hybrid_comparable_average_point_f1": 0.22329714539168313,
+      "existing_ada_average_point_f1": 0.3780914464953553,
+      "hybrid_minus_existing_ada_point_f1": -0.15479430110367218
+    },
+    "prior_comparison": {
+      "channels": [
+        "A-1",
+        "D-1",
+        "M-1"
+      ],
+      "hybrid": {
+        "average_precision": 0.31102301613939515,
+        "average_point_f1": 0.22329714539168313,
+        "average_point_adjusted_f1": 0.23719668744254777
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.42765026162255926,
+        "average_point_f1": 0.2034199252659521,
+        "average_point_adjusted_f1": 0.21615709030090272
+      },
+      "predictive_state": {
+        "average_precision": 0.4318345496144818,
+        "average_point_f1": 0.0,
+        "average_point_adjusted_f1": 0.0
+      },
+      "hybrid_minus_neural_point_f1": 0.019877220125731038,
+      "hybrid_minus_predictive_point_f1": 0.22329714539168313,
+      "existing_ada_comparable_channels": [
+        "A-1",
+        "D-1",
+        "M-1"
+      ],
+      "hybrid_comparable_average_point_f1": 0.22329714539168313,
+      "existing_ada_average_point_f1": 0.3780914464953553,
+      "hybrid_minus_existing_ada_point_f1": -0.15479430110367218
+    },
+    "development_holdout": {
+      "channels": [
+        "E-1",
+        "P-1",
+        "M-6"
+      ],
+      "hybrid": {
+        "average_precision": 0.11730132811946116,
+        "average_point_f1": 0.09917355371900827,
+        "average_point_adjusted_f1": 0.09917355371900827
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.11659702120347033,
+        "average_point_f1": 0.10959022038567494,
+        "average_point_adjusted_f1": 0.3840220385674931
+      },
+      "predictive_state": {
+        "average_precision": 0.1386942653104007,
+        "average_point_f1": 0.07484865162355532,
+        "average_point_adjusted_f1": 0.4990503323836657
+      },
+      "hybrid_minus_neural_point_f1": -0.010416666666666671,
+      "hybrid_minus_predictive_point_f1": 0.024324902095452947
+    },
+    "mahalanobis_validation": {
+      "channels": [
+        "A-5",
+        "E-12",
+        "S-1",
+        "T-1"
+      ],
+      "hybrid": {
+        "average_precision": 0.12865269718368352,
+        "average_point_f1": 0.0,
+        "average_point_adjusted_f1": 0.0
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.1751211485784616,
+        "average_point_f1": 0.04307795698924732,
+        "average_point_adjusted_f1": 0.500092107797224
+      },
+      "predictive_state": {
+        "average_precision": 0.13876597785054975,
+        "average_point_f1": 0.08645833333333335,
+        "average_point_adjusted_f1": 0.25925925925925924
+      },
+      "hybrid_minus_neural_point_f1": -0.04307795698924732,
+      "hybrid_minus_predictive_point_f1": -0.08645833333333335
+    },
+    "mahalanobis_validation_reliable": {
+      "channels": [
+        "E-12",
+        "S-1",
+        "T-1"
+      ],
+      "hybrid": {
+        "average_precision": 0.16791374117244762,
+        "average_point_f1": 0.0,
+        "average_point_adjusted_f1": 0.0
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.22958594775675842,
+        "average_point_f1": 0.050268817204301076,
+        "average_point_adjusted_f1": 0.6596210182816034
+      },
+      "predictive_state": {
+        "average_precision": 0.11452692862629858,
+        "average_point_f1": 0.004166666666666667,
+        "average_point_adjusted_f1": 0.012345679012345678
+      },
+      "hybrid_minus_neural_point_f1": -0.050268817204301076,
+      "hybrid_minus_predictive_point_f1": -0.004166666666666667
+    },
+    "upper_tail_validation": {
+      "channels": [
+        "A-2",
+        "B-1",
+        "C-1",
+        "D-2",
+        "F-1",
+        "M-2"
+      ],
+      "hybrid": {
+        "average_precision": 0.33182772299230984,
+        "average_point_f1": 0.1631460308607548,
+        "average_point_adjusted_f1": 0.17171173088262023
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.3561373112036978,
+        "average_point_f1": 0.33645869125867794,
+        "average_point_adjusted_f1": 0.42079343212525067
+      },
+      "predictive_state": {
+        "average_precision": 0.22391624411607633,
+        "average_point_f1": 0.02206090947017104,
+        "average_point_adjusted_f1": 0.2704393223010244
+      },
+      "hybrid_minus_neural_point_f1": -0.17331266039792315,
+      "hybrid_minus_predictive_point_f1": 0.14108512139058377
+    },
+    "upper_tail_validation_reliable": {
+      "channels": [
+        "A-2",
+        "B-1",
+        "C-1",
+        "D-2",
+        "F-1",
+        "M-2"
+      ],
+      "hybrid": {
+        "average_precision": 0.33182772299230984,
+        "average_point_f1": 0.1631460308607548,
+        "average_point_adjusted_f1": 0.17171173088262023
+      },
+      "neural_reconstruction": {
+        "average_precision": 0.3561373112036978,
+        "average_point_f1": 0.33645869125867794,
+        "average_point_adjusted_f1": 0.42079343212525067
+      },
+      "predictive_state": {
+        "average_precision": 0.22391624411607633,
+        "average_point_f1": 0.02206090947017104,
+        "average_point_adjusted_f1": 0.2704393223010244
+      },
+      "hybrid_minus_neural_point_f1": -0.17331266039792315,
+      "hybrid_minus_predictive_point_f1": 0.14108512139058377
+    }
+  },
+  "runtime_seconds": {
+    "total_wall": 0.5286414000001969
+  },
+  "decision": {
+    "status": "rejected_as_universal_nasa_replacement",
+    "basis_group": "upper_tail_validation_reliable",
+    "primary_metric": "average_point_f1",
+    "hybrid_minus_neural_point_f1": -0.17331266039792315,
+    "operational_default_changed": false,
+    "operational_default": "existing_ada"
+  }
+}
