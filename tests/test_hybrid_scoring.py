@@ -2,6 +2,8 @@
 import unittest
 import uuid
 from pathlib import Path
+import subprocess
+import sys
 from unittest import mock
 
 import numpy as np
@@ -20,7 +22,9 @@ from src.utils.robust_score_fusion import (
     RobustScoreMahalanobisFusion,
     evaluate_robust_score_fusion,
 )
+from src.utils.channel_expert_selection import NormalStabilityExpertSelector
 from scripts.evaluate_nasa_hybrid import _aggregate, _fit_reference_rescale, _is_cuda_device
+from scripts.evaluate_nasa_expert_selection import _choose_policy
 from src.data.nasa_loader import get_nasa_channel_data
 
 
@@ -375,6 +379,64 @@ class HybridScoringTest(unittest.TestCase):
             original["fusion"]["score_summary"],
             relabeled["fusion"]["score_summary"],
         )
+
+    def test_normal_stability_selector_prefers_expert_with_stable_normal_tail(self):
+        selector = NormalStabilityExpertSelector(
+            quantile=0.8,
+            fallback_expert="neural_reconstruction",
+        ).fit(
+            {
+                "neural_reconstruction": {
+                    "calibration": np.arange(10, dtype=float),
+                    "validation": np.arange(10, 20, dtype=float),
+                },
+                "predictive_state": {
+                    "calibration": np.arange(10, dtype=float),
+                    "validation": np.arange(10, dtype=float),
+                },
+            }
+        )
+
+        self.assertEqual(selector.selected_expert, "predictive_state")
+        self.assertEqual(selector.fit_summary["labels_used"], False)
+        self.assertLess(
+            selector.fit_summary["experts"]["predictive_state"]["tail_error"],
+            selector.fit_summary["experts"]["neural_reconstruction"]["tail_error"],
+        )
+
+    def test_normal_stability_selector_keeps_fallback_for_tied_experts(self):
+        scores = {
+            "neural_reconstruction": {
+                "calibration": np.arange(10, dtype=float),
+                "validation": np.arange(10, dtype=float),
+            },
+            "predictive_state": {
+                "calibration": np.arange(10, dtype=float),
+                "validation": np.arange(10, dtype=float),
+            },
+        }
+
+        selector = NormalStabilityExpertSelector(
+            quantile=0.8,
+            fallback_expert="neural_reconstruction",
+        ).fit(scores)
+
+        self.assertEqual(selector.selected_expert, "neural_reconstruction")
+
+    def test_policy_choice_requires_strict_development_improvement(self):
+        self.assertEqual(_choose_policy(0.30, 0.30), "neural_only")
+        self.assertEqual(_choose_policy(0.31, 0.30), "normal_stability")
+
+    def test_expert_selection_script_imports_when_run_directly(self):
+        result = subprocess.run(
+            [sys.executable, "scripts/evaluate_nasa_expert_selection.py", "--help"],
+            cwd=Path.cwd(),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 if __name__ == "__main__":

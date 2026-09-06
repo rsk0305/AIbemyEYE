@@ -1,0 +1,929 @@
+{
+  "schema_version": 1,
+  "algorithm": "normal_stability_channel_expert_selection",
+  "source_report": "results\\nasa_hybrid_performance.json",
+  "selection_policy": {
+    "development_channels": [
+      "A-1",
+      "D-1",
+      "M-1",
+      "E-1",
+      "P-1",
+      "M-6"
+    ],
+    "frozen_validation_channels": [
+      "A-2",
+      "B-1",
+      "C-1",
+      "D-2",
+      "F-1",
+      "M-2"
+    ],
+    "development_labels_used_to_select_between_policies": true,
+    "normal_score_labels_used_for_channel_selection": false,
+    "policy_candidates": [
+      "neural_only",
+      "normal_stability"
+    ],
+    "policy_selection_rule": "choose normal_stability only for strict development Point F1 improvement",
+    "selected_policy": "neural_only"
+  },
+  "channels": {
+    "A-1": {
+      "channel": "A-1",
+      "role": "prior_comparison",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.10803922265768051,
+        "point": {
+          "precision": 0.009400705052878966,
+          "recall": 1.0,
+          "f1": 0.018626309662398137,
+          "true_positive": 8,
+          "false_positive": 843,
+          "false_negative": 0,
+          "true_negative": 4
+        },
+        "event": {
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1": 0.5,
+          "true_events": 1,
+          "predicted_events": 3,
+          "matched_events": 1,
+          "false_alarm_events": 2,
+          "average_latency": 0.0
+        },
+        "point_adjusted": {
+          "precision": 0.009400705052878966,
+          "recall": 1.0,
+          "f1": 0.018626309662398137
+        },
+        "ranking": {
+          "average_precision": 0.00847254541465875
+        },
+        "score_summary": {
+          "minimum": 0.10626070201396942,
+          "median": 0.10851175338029861,
+          "mean": 0.10851631486973567,
+          "maximum": 0.11186609417200089
+        },
+        "validation_false_positive_rate": 0.0041928721174004195
+      }
+    },
+    "D-1": {
+      "channel": "D-1",
+      "role": "prior_comparison",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.22447240874171254,
+        "point": {
+          "precision": 0.4374079528718704,
+          "recall": 0.9138461538461539,
+          "f1": 0.5916334661354582,
+          "true_positive": 297,
+          "false_positive": 382,
+          "false_negative": 28,
+          "true_negative": 134
+        },
+        "event": {
+          "precision": 0.02631578947368421,
+          "recall": 1.0,
+          "f1": 0.05128205128205127,
+          "true_events": 1,
+          "predicted_events": 38,
+          "matched_events": 1,
+          "false_alarm_events": 37,
+          "average_latency": 0.0
+        },
+        "point_adjusted": {
+          "precision": 0.4596888260254597,
+          "recall": 1.0,
+          "f1": 0.6298449612403101
+        },
+        "ranking": {
+          "average_precision": 0.939477394581344
+        },
+        "score_summary": {
+          "minimum": 0.05538669973611832,
+          "median": 0.30284854769706726,
+          "mean": 0.37976848247253936,
+          "maximum": 0.6252163648605347
+        },
+        "validation_false_positive_rate": 0.006369426751592357
+      }
+    },
+    "M-1": {
+      "channel": "M-1",
+      "role": "prior_comparison",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.3362543642520905,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 32,
+          "false_negative": 114,
+          "true_negative": 72
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 5,
+          "matched_events": 0,
+          "false_alarm_events": 5,
+          "average_latency": null
+        },
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.335000844871675
+        },
+        "score_summary": {
+          "minimum": 0.046963728964328766,
+          "median": 0.2333221286535263,
+          "mean": 0.24436374015490944,
+          "maximum": 0.3936116397380829
+        },
+        "validation_false_positive_rate": 0.0058309037900874635
+      }
+    },
+    "E-1": {
+      "channel": "E-1",
+      "role": "predeclared_holdout",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.34597446978092194,
+        "point": {
+          "precision": 0.07142857142857142,
+          "recall": 0.02,
+          "f1": 0.03125,
+          "true_positive": 1,
+          "false_positive": 13,
+          "false_negative": 49,
+          "true_negative": 779
+        },
+        "event": {
+          "precision": 0.07692307692307693,
+          "recall": 0.5,
+          "f1": 0.13333333333333336,
+          "true_events": 2,
+          "predicted_events": 13,
+          "matched_events": 1,
+          "false_alarm_events": 12,
+          "average_latency": 27.0
+        },
+        "point_adjusted": {
+          "precision": 0.7833333333333333,
+          "recall": 0.94,
+          "f1": 0.8545454545454546
+        },
+        "ranking": {
+          "average_precision": 0.10471617725806572
+        },
+        "score_summary": {
+          "minimum": 0.03177494555711746,
+          "median": 0.1891702264547348,
+          "mean": 0.17722833201713914,
+          "maximum": 0.3705051839351654
+        },
+        "validation_false_positive_rate": 0.006289308176100629
+      }
+    },
+    "P-1": {
+      "channel": "P-1",
+      "role": "predeclared_holdout",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.172482717782259,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 1,
+          "false_negative": 75,
+          "true_negative": 765
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 3,
+          "predicted_events": 1,
+          "matched_events": 0,
+          "false_alarm_events": 1,
+          "average_latency": null
+        },
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.06179824576863657
+        },
+        "score_summary": {
+          "minimum": 0.020421933382749557,
+          "median": 0.07666253298521042,
+          "mean": 0.07857004866252047,
+          "maximum": 0.1886143535375595
+        },
+        "validation_false_positive_rate": 0.0063025210084033615
+      }
+    },
+    "M-6": {
+      "channel": "M-6",
+      "role": "predeclared_holdout",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.044260146766901015,
+        "point": {
+          "precision": 0.17475728155339806,
+          "recall": 1.0,
+          "f1": 0.2975206611570248,
+          "true_positive": 18,
+          "false_positive": 85,
+          "false_negative": 0,
+          "true_negative": 92
+        },
+        "event": {
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4,
+          "true_events": 1,
+          "predicted_events": 4,
+          "matched_events": 1,
+          "false_alarm_events": 3,
+          "average_latency": 0.0
+        },
+        "point_adjusted": {
+          "precision": 0.17475728155339806,
+          "recall": 1.0,
+          "f1": 0.2975206611570248
+        },
+        "ranking": {
+          "average_precision": 0.18327664058370874
+        },
+        "score_summary": {
+          "minimum": 0.044211823493242264,
+          "median": 0.17697548866271973,
+          "mean": 0.22594140091767678,
+          "maximum": 0.41070756316185
+        },
+        "validation_false_positive_rate": 0.009345794392523364
+      }
+    },
+    "A-5": {
+      "channel": "A-5",
+      "role": "mahalanobis_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.007684544825460762,
+        "point": {
+          "precision": 0.010869565217391304,
+          "recall": 1.0,
+          "f1": 0.02150537634408602,
+          "true_positive": 5,
+          "false_positive": 455,
+          "false_negative": 0,
+          "true_negative": 0
+        },
+        "event": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "true_events": 1,
+          "predicted_events": 1,
+          "matched_events": 1,
+          "false_alarm_events": 0,
+          "average_latency": 0.0
+        },
+        "point_adjusted": {
+          "precision": 0.010869565217391304,
+          "recall": 1.0,
+          "f1": 0.02150537634408602
+        },
+        "ranking": {
+          "average_precision": 0.011726751043571144
+        },
+        "score_summary": {
+          "minimum": 0.05379191040992737,
+          "median": 0.07332032173871994,
+          "mean": 0.359229093854842,
+          "maximum": 0.7827611565589905
+        },
+        "validation_false_positive_rate": 0.023809523809523808
+      }
+    },
+    "E-12": {
+      "channel": "E-12",
+      "role": "mahalanobis_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.346591574549675,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 17,
+          "false_negative": 58,
+          "true_negative": 767
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 2,
+          "predicted_events": 14,
+          "matched_events": 0,
+          "false_alarm_events": 14,
+          "average_latency": null
+        },
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.04196748403766842
+        },
+        "score_summary": {
+          "minimum": 0.018753625452518463,
+          "median": 0.18633461743593216,
+          "mean": 0.17044133227539743,
+          "maximum": 0.3693428337574005
+        },
+        "validation_false_positive_rate": 0.006289308176100629
+      }
+    },
+    "S-1": {
+      "channel": "S-1",
+      "role": "mahalanobis_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.16596920132637025,
+        "point": {
+          "precision": 0.75,
+          "recall": 0.06818181818181818,
+          "f1": 0.125,
+          "true_positive": 3,
+          "false_positive": 1,
+          "false_negative": 41,
+          "true_negative": 679
+        },
+        "event": {
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4,
+          "true_events": 1,
+          "predicted_events": 4,
+          "matched_events": 1,
+          "false_alarm_events": 3,
+          "average_latency": 29.0
+        },
+        "point_adjusted": {
+          "precision": 0.9777777777777777,
+          "recall": 1.0,
+          "f1": 0.9887640449438202
+        },
+        "ranking": {
+          "average_precision": 0.15710421247252512
+        },
+        "score_summary": {
+          "minimum": 0.030658995732665062,
+          "median": 0.1087430864572525,
+          "mean": 0.10925987273331175,
+          "maximum": 0.18945923447608948
+        },
+        "validation_false_positive_rate": 0.0064516129032258064
+      }
+    },
+    "T-1": {
+      "channel": "T-1",
+      "role": "mahalanobis_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.5537370219826698,
+        "point": {
+          "precision": 1.0,
+          "recall": 0.013071895424836602,
+          "f1": 0.02580645161290323,
+          "true_positive": 2,
+          "false_positive": 0,
+          "false_negative": 151,
+          "true_negative": 699
+        },
+        "event": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5,
+          "true_events": 2,
+          "predicted_events": 2,
+          "matched_events": 1,
+          "false_alarm_events": 1,
+          "average_latency": 63.0
+        },
+        "point_adjusted": {
+          "precision": 1.0,
+          "recall": 0.9803921568627451,
+          "f1": 0.99009900990099
+        },
+        "ranking": {
+          "average_precision": 0.48968614676008165
+        },
+        "score_summary": {
+          "minimum": 0.28687745332717896,
+          "median": 0.3578662574291229,
+          "mean": 0.36923215181474955,
+          "maximum": 0.554925799369812
+        },
+        "validation_false_positive_rate": 0.0063025210084033615
+      }
+    },
+    "A-2": {
+      "channel": "A-2",
+      "role": "upper_tail_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.28074782192707065,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 11,
+          "true_negative": 771
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 0,
+          "matched_events": 0,
+          "false_alarm_events": 0,
+          "average_latency": null
+        },
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.009880871742727837
+        },
+        "score_summary": {
+          "minimum": 0.03724095597863197,
+          "median": 0.1630016714334488,
+          "mean": 0.15118546401867478,
+          "maximum": 0.2505215108394623
+        },
+        "validation_false_positive_rate": 0.0069605568445475635
+      }
+    },
+    "B-1": {
+      "channel": "B-1",
+      "role": "upper_tail_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.10825907438993454,
+        "point": {
+          "precision": 0.020066889632107024,
+          "recall": 0.8571428571428571,
+          "f1": 0.03921568627450981,
+          "true_positive": 6,
+          "false_positive": 293,
+          "false_negative": 1,
+          "true_negative": 495
+        },
+        "event": {
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1": 0.5,
+          "true_events": 1,
+          "predicted_events": 3,
+          "matched_events": 1,
+          "false_alarm_events": 2,
+          "average_latency": 1.0
+        },
+        "point_adjusted": {
+          "precision": 0.023333333333333334,
+          "recall": 1.0,
+          "f1": 0.04560260586319218
+        },
+        "ranking": {
+          "average_precision": 0.011427308656032486
+        },
+        "score_summary": {
+          "minimum": 0.10825421661138535,
+          "median": 0.10825905948877335,
+          "mean": 0.30009472342969484,
+          "maximum": 0.6340765357017517
+        },
+        "validation_false_positive_rate": 0.0
+      }
+    },
+    "C-1": {
+      "channel": "C-1",
+      "role": "upper_tail_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.054712307602167116,
+        "point": {
+          "precision": 0.26666666666666666,
+          "recall": 0.25806451612903225,
+          "f1": 0.26229508196721313,
+          "true_positive": 8,
+          "false_positive": 22,
+          "false_negative": 23,
+          "true_negative": 164
+        },
+        "event": {
+          "precision": 0.2,
+          "recall": 0.5,
+          "f1": 0.28571428571428575,
+          "true_events": 2,
+          "predicted_events": 5,
+          "matched_events": 1,
+          "false_alarm_events": 4,
+          "average_latency": 2.0
+        },
+        "point_adjusted": {
+          "precision": 0.47619047619047616,
+          "recall": 0.6451612903225806,
+          "f1": 0.547945205479452
+        },
+        "ranking": {
+          "average_precision": 0.28763153486692605
+        },
+        "score_summary": {
+          "minimum": 0.005707114469259977,
+          "median": 0.012923956848680973,
+          "mean": 0.02542538032545129,
+          "maximum": 0.09792792052030563
+        },
+        "validation_false_positive_rate": 0.006006006006006006
+      }
+    },
+    "D-2": {
+      "channel": "D-2",
+      "role": "upper_tail_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.10784834623336792,
+        "point": {
+          "precision": 0.9846153846153847,
+          "recall": 0.909952606635071,
+          "f1": 0.9458128078817734,
+          "true_positive": 384,
+          "false_positive": 6,
+          "false_negative": 38,
+          "true_negative": 422
+        },
+        "event": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "true_events": 1,
+          "predicted_events": 1,
+          "matched_events": 1,
+          "false_alarm_events": 0,
+          "average_latency": 38.0
+        },
+        "point_adjusted": {
+          "precision": 0.985981308411215,
+          "recall": 1.0,
+          "f1": 0.9929411764705882
+        },
+        "ranking": {
+          "average_precision": 0.9604749548246684
+        },
+        "score_summary": {
+          "minimum": 0.10769537836313248,
+          "median": 0.10776069760322571,
+          "mean": 0.34264588838114457,
+          "maximum": 0.632622480392456
+        },
+        "validation_false_positive_rate": 0.0020964360587002098
+      }
+    },
+    "F-1": {
+      "channel": "F-1",
+      "role": "upper_tail_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.04844580709934234,
+        "point": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_positive": 0,
+          "false_positive": 10,
+          "false_negative": 10,
+          "true_negative": 829
+        },
+        "event": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "true_events": 1,
+          "predicted_events": 3,
+          "matched_events": 0,
+          "false_alarm_events": 3,
+          "average_latency": null
+        },
+        "point_adjusted": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ranking": {
+          "average_precision": 0.012735651055340684
+        },
+        "score_summary": {
+          "minimum": 0.014837889932096004,
+          "median": 0.03037773258984089,
+          "mean": 0.030146312880142207,
+          "maximum": 0.08645167946815491
+        },
+        "validation_false_positive_rate": 0.00631578947368421
+      }
+    },
+    "M-2": {
+      "channel": "M-2",
+      "role": "upper_tail_predeclared_validation",
+      "selected_expert": "neural_reconstruction",
+      "selector": {
+        "method": "fixed_neural_baseline",
+        "labels_used": false,
+        "selected_expert": "neural_reconstruction"
+      },
+      "metrics": {
+        "threshold": 0.34085976511240007,
+        "point": {
+          "precision": 0.84375,
+          "recall": 0.7105263157894737,
+          "f1": 0.7714285714285714,
+          "true_positive": 81,
+          "false_positive": 15,
+          "false_negative": 33,
+          "true_negative": 89
+        },
+        "event": {
+          "precision": 0.05555555555555555,
+          "recall": 1.0,
+          "f1": 0.10526315789473684,
+          "true_events": 1,
+          "predicted_events": 18,
+          "matched_events": 1,
+          "false_alarm_events": 17,
+          "average_latency": 12.0
+        },
+        "point_adjusted": {
+          "precision": 0.8837209302325582,
+          "recall": 1.0,
+          "f1": 0.9382716049382717
+        },
+        "ranking": {
+          "average_precision": 0.8546735460764912
+        },
+        "score_summary": {
+          "minimum": 0.09946656227111816,
+          "median": 0.33401621878147125,
+          "mean": 0.27132521713272145,
+          "maximum": 0.39828380942344666
+        },
+        "validation_false_positive_rate": 0.0058309037900874635
+      }
+    }
+  },
+  "summary": {
+    "all": {
+      "channels": [
+        "A-1",
+        "D-1",
+        "M-1",
+        "E-1",
+        "P-1",
+        "M-6",
+        "A-5",
+        "E-12",
+        "S-1",
+        "T-1",
+        "A-2",
+        "B-1",
+        "C-1",
+        "D-2",
+        "F-1",
+        "M-2"
+      ],
+      "average_precision": 0.2793781443758826,
+      "average_point_f1": 0.19563090077899611,
+      "average_point_adjusted_f1": 0.39535415065909923,
+      "expert_counts": {
+        "neural_reconstruction": 16,
+        "predictive_state": 0,
+        "robust_mahalanobis": 0
+      }
+    },
+    "development": {
+      "channels": [
+        "A-1",
+        "D-1",
+        "M-1",
+        "E-1",
+        "P-1",
+        "M-6"
+      ],
+      "average_precision": 0.2721236414130148,
+      "average_point_f1": 0.15650507282581352,
+      "average_point_adjusted_f1": 0.30008956443419793,
+      "expert_counts": {
+        "neural_reconstruction": 6,
+        "predictive_state": 0,
+        "robust_mahalanobis": 0
+      }
+    },
+    "upper_tail_validation": {
+      "channels": [
+        "A-2",
+        "B-1",
+        "C-1",
+        "D-2",
+        "F-1",
+        "M-2"
+      ],
+      "average_precision": 0.3561373112036978,
+      "average_point_f1": 0.33645869125867794,
+      "average_point_adjusted_f1": 0.42079343212525067,
+      "expert_counts": {
+        "neural_reconstruction": 6,
+        "predictive_state": 0,
+        "robust_mahalanobis": 0
+      }
+    },
+    "candidate_policies": {
+      "normal_stability": {
+        "development": {
+          "channels": [
+            "A-1",
+            "D-1",
+            "M-1",
+            "E-1",
+            "P-1",
+            "M-6"
+          ],
+          "average_precision": 0.24223736448023625,
+          "average_point_f1": 0.0462758371922923,
+          "average_point_adjusted_f1": 0.40327057677659145,
+          "expert_counts": {
+            "neural_reconstruction": 2,
+            "predictive_state": 3,
+            "robust_mahalanobis": 1
+          }
+        },
+        "upper_tail_validation": {
+          "channels": [
+            "A-2",
+            "B-1",
+            "C-1",
+            "D-2",
+            "F-1",
+            "M-2"
+          ],
+          "average_precision": 0.3034638847944853,
+          "average_point_f1": 0.1789120637249764,
+          "average_point_adjusted_f1": 0.26965686274509804,
+          "expert_counts": {
+            "neural_reconstruction": 1,
+            "predictive_state": 3,
+            "robust_mahalanobis": 2
+          }
+        }
+      },
+      "neural_only": {
+        "development": {
+          "channels": [
+            "A-1",
+            "D-1",
+            "M-1",
+            "E-1",
+            "P-1",
+            "M-6"
+          ],
+          "average_precision": 0.2721236414130148,
+          "average_point_f1": 0.15650507282581352,
+          "average_point_adjusted_f1": 0.30008956443419793,
+          "expert_counts": {
+            "neural_reconstruction": 6,
+            "predictive_state": 0,
+            "robust_mahalanobis": 0
+          }
+        },
+        "upper_tail_validation": {
+          "channels": [
+            "A-2",
+            "B-1",
+            "C-1",
+            "D-2",
+            "F-1",
+            "M-2"
+          ],
+          "average_precision": 0.3561373112036978,
+          "average_point_f1": 0.33645869125867794,
+          "average_point_adjusted_f1": 0.42079343212525067,
+          "expert_counts": {
+            "neural_reconstruction": 6,
+            "predictive_state": 0,
+            "robust_mahalanobis": 0
+          }
+        }
+      }
+    }
+  }
+}
